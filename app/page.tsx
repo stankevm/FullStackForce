@@ -1,113 +1,234 @@
-import Image from 'next/image'
+"use client";
+{/*import Image from 'next/image'*/}
+import Typewriter from "./components/Typewriter";
+import ServiceCard from './components/ServiceCard';
+import GlowCard from './components/GlowCard';
+import TeamCard from './components/TeamCard';
+import TechBall from "./components/TechBall";
+import ComputerCanvas from "./components/ComputerCanvas";
 
 export default function Home() {
+  const services = [
+    {
+      title: "Advisory & CTO-as-a-Service",
+      items: [
+        "Technical Due Diligence",
+        "Startup Mentorship",
+        "Scaling Support"
+      ],
+      icon: "fa-solid fa-bullseye"
+    },
+    {
+      title: "Full-stack Development",
+      items: [
+        "Web & App Development",
+        "Microservices & Modular Systems",
+        "Custom UI/UX Engineering"
+      ],
+      icon: "fa-solid fa-laptop-code"
+    },
+    {
+      title: "API & Architecture",
+      items: [
+        "REST & GraphQL API Design",
+        "Server-side Architecture",
+        "Authentication & Role Management"
+      ],
+      icon: "fa-solid fa-sitemap"
+    },
+    {
+      title: "Cloud & DevOps",
+      items: [
+        "Cloud Deployments (Azure, AWS, GCP)",
+        "CI/CD Pipelines & Containerization",
+        "Infrastructure as Code (IaC)"
+      ],
+      icon: "fa-solid fa-cloud"
+    },
+    {
+      title: "Data & Integration",
+      items: [
+        "Databases: SQL, MongoDB, PostgreSQL",
+        "System Integration (PACS, HL7)",
+        "Data Warehousing & ETL"
+      ],
+      icon: "fa-solid fa-database"
+    },
+    {
+      title: "Quality & Support",
+      items: [
+        "Automated Testing & QA",
+        "Monitoring & Observability",
+        "Post-Launch Support"
+      ],
+      icon: "fa-solid fa-shield-halved"
+    }
+  ];
+
+  const projects = [
+    {
+      title: "E-commerce Platform",
+      description: "A modern e-commerce solution built with Next.js and Node.js"
+    },
+    {
+      title: "Healthcare Management System",
+      description: "Integrated EHR system with HL7 compatibility"
+    },
+    {
+      title: "Financial Analytics Dashboard",
+      description: "Real-time data visualization platform for financial metrics"
+    }
+  ];
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+    <main>
+      {/* Section 1: Homepage */}
+      <section className="section hero">
+        <div className="hero-header">
+          <h1>FullStackForce</h1>
+          <div className="hero-typewriter">
+            Elite Software Engineers for<br />
+            <Typewriter
+              phrases={[
+                "End-to-End Product Development.",
+                "Cloud.",
+                "Backend.",
+                "Frontend.",
+                "Integration."
+              ]}
             />
-          </a>
+          </div>
+          {/*<img src="/laptop.png" alt="Laptop" className="hero-laptop" />*/}
+          <div className="hero-laptop" style={{ pointerEvents: 'auto'}}>
+            <ComputerCanvas />
+          </div>
+          <div>
+            <a href="#page-bottom" className="button" data-text="Let's Talk">Let's Talk</a>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+      {/* Section 2: Delivery Flow, Services, Projects, Why Work With Us */}
+      <section className="section section2">
+        <div className="section-content">
+          <div className="mission-statement">
+            <p>We deliver high-quality software with precision and speed.</p>
+            <p>Empower clients through technology and transparency.</p>
+            <p>Build scalable, secure, and maintainable systems.</p>
+            <p>Foster long-term partnerships based on trust and excellence.</p>
+          </div>
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+          <h2>End-to-end Delivery Flow</h2>
+          <div className="delivery-flow">
+            <div className="flow-row">
+              <div className="flow-item">Ideation</div>
+              <div className="flow-arrow">→</div>
+              <div className="flow-item">Advisory & Planning</div>
+              <div className="flow-arrow">→</div>
+              <div className="flow-item">Design & Architecture</div>
+              <div className="flow-arrow">→</div>
+              <div className="flow-item">Development</div>
+            </div>
+            <div className="flow-row">
+              <div className="flow-item">Testing & QA</div>
+              <div className="flow-arrow">→</div>
+              <div className="flow-item">Deployment</div>
+              <div className="flow-arrow">→</div>
+              <div className="flow-item">Support & Scale</div>
+            </div>
+          </div>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+          <h2>Our Services</h2>
+          <div className="services-grid">
+            {services.map((service, index) => (
+              <ServiceCard
+                key={index}
+                title={service.title}
+                items={service.items}
+                icon={service.icon}
+              />
+            ))}
+          </div>
+          {/*balls */}
+          <div style={{
+            display:'flex',
+            flexWrap:'wrap',
+            justifyContent:'center',
+            gap:'2.5rem',
+            margin:'3rem 0',
+            position: 'relative',
+            zIndex: 20
+          }}>
+            {[
+              {img:'/icons/React.png', label:'React'},
+              {img:'/icons/NET.png', label:'.NET'},
+              {img:'/icons/MongoDB.png', label:'MongoDB'},
+              {img:'/icons/sql.png', label:'SQL Server'},
+              {img:'/icons/azure.png', label:'Azure'},
+              {img:'/icons/AWS.png', label:'AWS'}
+            ].map((tech, i)=>(
+              <div key={i} style={{
+                display:'flex',
+                flexDirection:'column',
+                alignItems:'center',
+                position: 'relative',
+                zIndex: 20
+              }}>
+                <TechBall imgUrl={tech.img} color="#ead5ff" size={100} multiSide/>
+                <p style={{marginTop:'0.5rem',fontWeight:500}}>{tech.label}</p>
+              </div>
+            ))}
+          </div>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
+          <h2 style={{marginTop: '7rem'}}>Projects</h2>
+          <div className="services-grid">
+            {projects.map((project, index) => (
+              <GlowCard key={index} card={project} index={index} />
+            ))}
+          </div>
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+          <h2 style={{marginTop: '7rem'}}>Why work with us?</h2>
+          <div className="why-work-statement">
+            <p>No juniors, no BS — just senior devs.</p>
+            <p>We speak business and code.</p>
+            <p>Fast ramp-up. Proven delivery.</p>
+          </div>
+          {/*lines image */}
+          <img
+            src="/lines_light_back.png"
+            alt="Decorative lines"
+            className="full-width-img big-lines mt-8 select-none pointer-events-none"
+          />
+        </div>
+      </section>
+
+      {/* Section 3: Team & Contact */}
+      <section id="contact" className="section section3">
+        <div className="section-content">
+          <h2 style={{ marginBottom: '4rem' }}>Meet our team</h2>
+          <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '2rem', marginBottom: '2.5rem'}}>
+            {[
+              { name: 'Vigen Sh.', role: 'CTO – Strategy & Architecture', imageSrc: '/CTO.png' },
+              { name: 'Gera B.', role: 'CEO & R&D Lead', imageSrc: '/CEO.png' },
+              { name: 'Stas A.', role: 'Frontend Developer', imageSrc: '/person_on_toi.png' },
+              { name: 'Stas B.', role: 'Backend Developer', imageSrc: '/person_on_toi.png' },
+            ].map((member, idx) => (
+              <TeamCard
+                key={idx}
+                imageSrc={member.imageSrc}
+                name={member.name}
+                role={member.role}
+              />
+            ))}
+          </div>
+          <h2>Contact</h2>
+          <p>Ready to build something extraordinary?</p>
+          <p>Email: <a href="mailto:team@fullstackforce.dev">team@fullstackforce.dev</a></p>
+        </div>
+      </section>
+
+      {/* for let's talk button */}
+      <div id="page-bottom" style={{ height: '1px' }} />
     </main>
-  )
+  );
 }
