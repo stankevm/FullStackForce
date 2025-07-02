@@ -25,7 +25,7 @@ const BallMesh: React.FC<TechBallProps> = ({ imgUrl, color = "#ffffff", multiSid
 
   return (
     <mesh ref={meshRef} castShadow receiveShadow>
-      <icosahedronGeometry args={[1, 1]} />
+      <icosahedronGeometry args={[1, 20]} />
       <meshStandardMaterial
         color={color}
         flatShading

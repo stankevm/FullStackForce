@@ -13,7 +13,7 @@ const ComputerModel: React.FC<ComputerModelProps> = ({ isMobile }) => {
 
   return (
     <mesh>
-      {/* Global ambient light to brighten the whole model */}
+      {/* Global ambient light for the whole model */}
       <ambientLight intensity={0.8} />
       {/* Soft sky-ground light */}
       <hemisphereLight intensity={0.5} groundColor="black" />
