@@ -7,6 +7,7 @@ import TeamCard from './components/TeamCard';
 import TechBall from "./components/TechBall";
 import ComputerCanvas from "./components/ComputerCanvas";
 import Toolbar from "./components/Toolbar";
+import GlowingLines from "./components/GlowingLines";
 
 export default function Home() {
   const services = [
@@ -87,6 +88,7 @@ export default function Home() {
       <main>
         {/* Section 1: Homepage */}
         <section className="section hero">
+          <GlowingLines />
           <div className="hero-header">
             <h1>FullStackForce</h1>
             <div className="hero-typewriter">
