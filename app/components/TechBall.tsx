@@ -6,7 +6,7 @@ import { OrbitControls, useTexture, Decal } from "@react-three/drei";
 import * as THREE from "three";
 
 interface TechBallProps {
-  imgUrl?: string;
+  imgUrl: string;
   color?: string;
   size?: number;
   multiSide?: boolean;
@@ -14,7 +14,7 @@ interface TechBallProps {
 
 const BallMesh: React.FC<TechBallProps> = ({ imgUrl, color = "#ffffff", multiSide }) => {
   const meshRef = useRef<THREE.Mesh>(null!);
-  const texture = imgUrl ? useTexture(imgUrl) : null;
+  const texture = useTexture(imgUrl);
 
   useFrame(() => {
     if (meshRef.current) {

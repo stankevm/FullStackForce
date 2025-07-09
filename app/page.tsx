@@ -103,12 +103,12 @@ export default function Home() {
                 ]}
               />
             </div>
-            <img src="/laptop.png" alt="Laptop" className="hero-laptop" />
+            {/*<img src="/laptop.png" alt="Laptop" className="hero-laptop" />*/}
             {/*<div className="hero-laptop" style={{ pointerEvents: 'auto'}}>
               <ComputerCanvas />
             </div>*/}
             <div>
-              <a href="#page-bottom" className="button" data-text="Let's Talk">Let's Talk</a>
+              <a href="#page-bottom" className="button" data-text="Let's Talk">Let&apos;s Talk</a>
             </div>
           </div>
         </section>

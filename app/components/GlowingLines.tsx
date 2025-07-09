@@ -38,6 +38,7 @@ const GlowingLines: React.FC = () => {
             <stop offset="50%" stopColor="#b366ff" />
             <stop offset="80%" stopColor="#cfc3ee" />
             <stop offset="100%" stopColor="#5933c7" />
+
           </linearGradient>
         </defs>
         {lines.map((l, idx) => (
