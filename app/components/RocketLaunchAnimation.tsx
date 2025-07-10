@@ -30,10 +30,12 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
   const [rocketPosition, setRocketPosition] = useState(0);
   const [showFlame, setShowFlame] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
+  const [smokePlumes, setSmokePlumes] = useState<any[]>([]);
   
   const animationRef = useRef<number | null>(null);
   const rocketRef = useRef<HTMLDivElement | null>(null);
   const particleIdRef = useRef(0);
+  const smokePlumeId = useRef(0);
 
   // Static part of the code (always visible)
   const staticCode = `function configureNavigation(): void {
@@ -73,7 +75,6 @@ rocket.launch = function(): void {
   //gets typed in real time
   const dynamicCode = `function start(): void {\n      rocket.launch();\n}\n\nstart();`;
 
-  // Type code animation
   useEffect(() => {
     if (!autoStart || !isTyping) return;
 
@@ -117,15 +118,48 @@ rocket.launch = function(): void {
 
 
 
+
   const animateRocket = () => {
     let position = 0;
     let velocity = 1;
     const acceleration = 0.3;
+    let plumeCreationCount = 0;
+    const maxPlumes = 50;
+    let lastPlumeTime = 0;
 
     const animate = () => {
       velocity += acceleration;
       position += velocity;
       setRocketPosition(position);
+
+      // Generate smoke plumes during flight
+      const currentTime = performance.now();
+      if (currentTime - lastPlumeTime > 40 && plumeCreationCount < maxPlumes) { // 80ms interval
+        const id = smokePlumeId.current++;
+        const side = (Math.random() > 0.5) ? 1 : -1;
+        const style = {
+            position: 'absolute',
+            bottom: `${30 + position}px`, // Use current position
+            left: '70%',
+            width: `${100 + Math.random() * 100}px`,
+            height: `${100 + Math.random() * 100}px`,
+            background: 'radial-gradient(circle, rgba(228, 170, 255, 0.16) 0%, rgba(192, 144, 232, 0.15) 70%)',
+            borderRadius: '50%',
+            filter: 'blur(20px)',
+            transform: `translateX(-50%)`,
+            animation: `smoke-fall-${side === 1 ? 'right' : 'left'} ${2 + Math.random() * 1}s ease-out forwards`,
+            zIndex: 19
+        };
+
+        setSmokePlumes((prev: any[]) => [...prev, { id, style }]);
+
+        setTimeout(() => {
+            setSmokePlumes((prev: any[]) => prev.filter(p => p.id !== id));
+        }, 6000);
+
+        lastPlumeTime = currentTime;
+        plumeCreationCount++;
+      }
 
       if (position < window.innerHeight + 200) {
         animationRef.current = requestAnimationFrame(animate);
@@ -419,6 +453,8 @@ rocket.launch = function(): void {
           </>
         )}
       </div>
+      
+      {smokePlumes.map(plume => <div key={plume.id} style={plume.style} />)}
 
       <style jsx>{`
         @keyframes blink {
@@ -443,6 +479,28 @@ rocket.launch = function(): void {
             opacity: 0;
           }
         }
+        
+        @keyframes smoke-fall-left {
+          from {
+            transform: translateX(-50%) scale(0.1);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(-250%) scale(3.5) translateY(300px);
+            opacity: 0;
+          }
+        }
+        @keyframes smoke-fall-right {
+          from {
+            transform: translateX(-50%) scale(0.1);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(150%) scale(3.5) translateY(300px);
+            opacity: 0;
+          }
+        }
+
         /* Fade effect for the upper part of the code block */
         .codeContainer {
           -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,1) 90%);
