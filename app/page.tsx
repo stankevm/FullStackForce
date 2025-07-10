@@ -118,7 +118,8 @@ export default function Home() {
                   fontFamily: "'Poppins', sans-serif",
                   fontWeight: 200,
                   display: 'block',
-                  color: '#ffffff',
+                  color: '#f2f1f5',
+                  fontSize: '1.7rem',
                 }}
                 phrases={[
                   "End-to-End Product Development.",
@@ -136,6 +137,7 @@ export default function Home() {
             <div>
               <a href="#page-bottom" className="button" data-text="Let's Talk">Let&apos;s Talk</a>
             </div>
+            <p className="hero-quote">May the FullStackForce skyrocket your growth.</p>
           </div>
         </section>
 

@@ -12,7 +12,7 @@ interface TypewriterProps {
 
 const Typewriter: React.FC<TypewriterProps> = ({
   phrases,
-  typingSpeed = 80,
+  typingSpeed = 50,
   deletingSpeed = 40,
   pause = 700,
   staticPrefix,

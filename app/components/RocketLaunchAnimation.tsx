@@ -38,39 +38,28 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
   const smokePlumeId = useRef(0);
 
   // Static part of the code (always visible)
-  const staticCode = `function configureNavigation(): void {
-      const navigationMatrix = [ [1.0, 0.0, 0.0], [0.0, 0.9848, -0.1736], [0.0, 0.1736, 0.9848] ];
-      const trajectoryVector = { x: 3400, y: 0, z: 18000 };
-      const guidanceComputer = { aligned: true, mode: "inertial", calibrationTime: Date.now() };
-      Math.random(); navigationMatrix[1][1] *= 1.0001; trajectoryVector.z += 1; guidanceComputer.mode = "launch";
+  const staticCode = `function setupCourse() {
+    let direction = [ [1, 0, 0], [0, 0.98, -0.17], [0, 0.17, 0.98] ];
+    let path = { x: 3400, y: 0, z: 18000 };
+    let computer = { ready: true, mode: "steady", time: now() };
+    random(); direction[1][1] *= 1.0001; path.z += 1; computer.mode = "go";
 }
-function armEngines(): void {
-      const engineState = { status: "idle", safetyLatch: true, preIgnited: false };
-      engineState.safetyLatch = false; engineState.preIgnited = true;
-      const vectorControl = { pitch: 0, yaw: 0, roll: 0 }; vectorControl.pitch += 5; vectorControl.yaw += 2;
-      engineState.status = "armed";
-}
-function checkSystems(fuel: number, engines: boolean, ready: boolean): boolean {
-      return fuel >= 80 && engines && ready;
-}
-function configureNavigation(): void {
-      const navigationMatrix = [ [1.0, 0.0, 0.0], [0.0, 0.9848, -0.1736], [0.0, 0.1736, 0.9848] ];
-      const trajectoryVector = { x: 3400, y: 0, z: 18000 };
-      const guidanceComputer = { aligned: true, mode: "inertial", calibrationTime: Date.now() };
-      Math.random(); navigationMatrix[1][1] *= 1.0001; trajectoryVector.z += 1; guidanceComputer.mode = "launch";
+    
+function checkAll(fuel, engines, go) {
+    return fuel >= 80 && engines && go;
 }
 
-function armEngines(): void {
-      const engineState = { status: "idle", safetyLatch: true, preIgnited: false };
-      engineState.safetyLatch = false; engineState.preIgnited = true;
-      const vectorControl = { pitch: 0, yaw: 0, roll: 0 }; vectorControl.pitch += 5; vectorControl.yaw += 2;
-      engineState.status = "armed";
+function prepEngines() {
+    let engine = { state: "off", locked: true, warm: false };
+    engine.locked = false; engine.warm = true;
+    let tilt = { up: 0, side: 0, spin: 0 }; tilt.up += 5; tilt.side += 2;
+    engine.state = "ready";
 }
 
-rocket.launch = function(): void {
-      if (!checkSystems(this.fuel, this.engines, this.ready)) return;
-      configureNavigation(); stabilizeFuelFlow(); armEngines(); initiateSequence();
-};\n`;
+rocket.launch = function() {
+    if (!checkAll(this.fuel, this.engines, this.ready)) return;
+    setupCourse(); balanceFuel(); prepEngines(); startLaunch();
+}\n`;
 
   //gets typed in real time
   const dynamicCode = `function start(): void {\n      rocket.launch();\n}\n\nstart();`;
@@ -143,11 +132,11 @@ rocket.launch = function(): void {
             left: '70%',
             width: `${100 + Math.random() * 100}px`,
             height: `${100 + Math.random() * 100}px`,
-            background: 'radial-gradient(circle, rgba(228, 170, 255, 0.16) 0%, rgba(192, 144, 232, 0.15) 70%)',
+            background: 'radial-gradient(circle, rgba(231, 188, 250, 0.16) 0%, rgba(195, 155, 227, 0.15) 70%)',
             borderRadius: '50%',
             filter: 'blur(20px)',
             transform: `translateX(-50%)`,
-            animation: `smoke-fall-${side === 1 ? 'right' : 'left'} ${2 + Math.random() * 1}s ease-out forwards`,
+            animation: `smoke-fall-${side === 1 ? 'right' : 'left'} ${3 + Math.random() * 1}s ease-out forwards`,
             zIndex: 19
         };
 
@@ -208,10 +197,10 @@ rocket.launch = function(): void {
         style={{
           position: 'absolute',
           bottom: '15px', 
-          left: '23%',
+          left: '22%',
           transform: 'translateX(0%)',
           width: '60%',
-          height: '500px',
+          height: '700px',
           background: 'transparent',
           padding: '20px',
           boxSizing: 'border-box',
@@ -219,18 +208,18 @@ rocket.launch = function(): void {
           zIndex: 10,
           pointerEvents: 'none',
           textAlign: 'left',
-          perspective: '400px' // delete to remove 3D effect like in starwars
+          perspective: '550px' // delete to remove 3D effect like in starwars
         }}
       >
         <div style={{
           color: '#ffffff',
-          fontSize: '18px',
+          fontSize: '25px',
           lineHeight: '1.5',
           whiteSpace: 'pre-wrap',
           height: '100%',
           overflow: 'hidden',
           position: 'relative',
-          transform: 'rotateX(25deg)', // delete to remove 3D effect like in starwars
+          transform: 'rotateX(55deg)', // delete to remove 3D effect like in starwars
           transformOrigin: 'bottom center' // delete to remove 3D effect like in starwars
         }}>
           <div style={{
@@ -252,9 +241,10 @@ rocket.launch = function(): void {
           position: 'absolute',
           bottom: '20px',
           left: '70%',
-          transform: `translateX(-50%) translateY(-${rocketPosition}px) rotate(${Math.sin(rocketPosition * 0.02) * 2}deg)`,
-          width: '80px',
-          height: '200px',
+          transform: `translateX(-50%) translateY(-${rocketPosition}px) scale(0.7)`,
+          transformOrigin: 'bottom center',
+          width: '60px',
+          height: '250px',
           transition: 'transform 0.1s ease',
           zIndex: 20
         }}
@@ -265,48 +255,34 @@ rocket.launch = function(): void {
           bottom: '30px',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '40px',
-          height: '120px',
+          width: '30px',
+          height: '180px',
           background: 'linear-gradient(to right, #e8e8e8, #ffffff, #d0d0d0)',
-          borderRadius: '20px 20px 8px 8px',
+          borderRadius: '15px 15px 6px 6px',
           boxShadow: 'inset -3px 0 8px rgba(0,0,0,0.1)'
         }} />
         
         {/* Upper Stage */}
         <div style={{
           position: 'absolute',
-          bottom: '140px',
+          bottom: '200px',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '32px',
-          height: '40px',
+          width: '24px',
+          height: '45px',
           background: 'linear-gradient(to right, #f0f0f0, #ffffff, #e0e0e0)',
-          borderRadius: '16px 16px 4px 4px',
+          borderRadius: '12px 12px 4px 4px',
           boxShadow: 'inset -2px 0 6px rgba(0,0,0,0.1)'
-        }} />
-        
-        {/* Nose Cone */}
-        <div style={{
-          position: 'absolute',
-          bottom: '171px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '0',
-          height: '0',
-          borderLeft: '16px solid transparent',
-          borderRight: '16px solid transparent',
-         // borderBottom: '20px solid #ff4757',
-          filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))'
         }} />
         
         {/* Command Module Window */}
         <div style={{
           position: 'absolute',
-          bottom: '155px',
+          bottom: '215px',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '12px',
-          height: '12px',
+          width: '10px',
+          height: '10px',
           background: 'radial-gradient(circle, #70a1ff, #3742fa)',
           borderRadius: '50%',
           border: '1px solid #2f3542',
@@ -319,7 +295,7 @@ rocket.launch = function(): void {
           bottom: '100px',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '38px',
+          width: '28px',
           height: '4px',
           background: '#57606f',
           borderRadius: '2px'
@@ -329,7 +305,7 @@ rocket.launch = function(): void {
           bottom: '85px',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '38px',
+          width: '28px',
           height: '4px',
           background: '#57606f',
           borderRadius: '2px'
@@ -339,44 +315,22 @@ rocket.launch = function(): void {
         <div style={{
           position: 'absolute',
           bottom: '30px',
-          left: '-8px',
-          width: '16px',
-          height: '100px',
+          left: '1px',
+          width: '12px',
+          height: '140px',
           background: 'linear-gradient(to right, #ddd, #fff, #ccc)',
-          borderRadius: '8px 8px 4px 4px',
+          borderRadius: '6px 6px 3px 3px',
           boxShadow: 'inset -1px 0 4px rgba(0,0,0,0.1)'
         }} />
         <div style={{
           position: 'absolute',
           bottom: '30px',
-          right: '-8px',
-          width: '16px',
-          height: '100px',
+          right: '1px',
+          width: '12px',
+          height: '140px',
           background: 'linear-gradient(to right, #ddd, #fff, #ccc)',
-          borderRadius: '8px 8px 4px 4px',
+          borderRadius: '6px 6px 3px 3px',
           boxShadow: 'inset -1px 0 4px rgba(0,0,0,0.1)'
-        }} />
-        
-        {/* Landing Legs */}
-        <div style={{
-          position: 'absolute',
-          bottom: '25px',
-          left: '8px',
-          width: '0',
-          height: '0',
-          borderTop: '25px solid #2c2c54',
-          borderLeft: '6px solid transparent',
-          borderRight: '6px solid transparent'
-        }} />
-        <div style={{
-          position: 'absolute',
-          bottom: '25px',
-          right: '8px',
-          width: '0',
-          height: '0',
-          borderTop: '25px solid #2c2c54',
-          borderLeft: '6px solid transparent',
-          borderRight: '6px solid transparent'
         }} />
         
         {/* Engine Nozzles */}
@@ -385,26 +339,26 @@ rocket.launch = function(): void {
           bottom: '15px',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '18px',
-          height: '15px',
+          width: '14px',
+          height: '12px',
           background: 'linear-gradient(to bottom, #57606f, #2c2c54)',
           borderRadius: '9px 9px 3px 3px'
         }} />
         <div style={{
           position: 'absolute',
           bottom: '20px',
-          left: '6px',
-          width: '8px',
-          height: '10px',
+          left: '3px',
+          width: '6px',
+          height: '8px',
           background: 'linear-gradient(to bottom, #57606f, #2c2c54)',
           borderRadius: '4px 4px 2px 2px'
         }} />
         <div style={{
           position: 'absolute',
           bottom: '20px',
-          right: '6px',
-          width: '8px',
-          height: '10px',
+          right: '3px',
+          width: '6px',
+          height: '8px',
           background: 'linear-gradient(to bottom, #57606f, #2c2c54)',
           borderRadius: '4px 4px 2px 2px'
         }} />
@@ -486,7 +440,7 @@ rocket.launch = function(): void {
             opacity: 1;
           }
           to {
-            transform: translateX(-250%) scale(3.5) translateY(300px);
+            transform: translateX(-300%) scale(3.5) translateY(300px);
             opacity: 0;
           }
         }

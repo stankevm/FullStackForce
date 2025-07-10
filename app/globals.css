@@ -58,14 +58,24 @@ body {
 }
 
 .hero-typewriter {
-  font-size: 2.0rem;
-  margin-top: 4rem;
-  margin-bottom: 2rem;
+  font-size: 1.9rem;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
   font-weight: 500;
-  color: #baa7e1;
+  color: #c6b7e4;
   margin-left: 0rem;
   text-align: center;
   font-family: 'Courier New', monospace;
+}
+
+.hero-quote {
+  font-size: 1.25rem;
+  font-style: italic;
+  color: #d0b3ff;
+  text-shadow: 0 0 8px rgba(167, 72, 255, 0.8), 0 0 12px rgba(167, 72, 255, 0.6), 0 0 18px rgba(167, 72, 255, 0.4);
+  margin-top: 3rem;
+  text-align: center;
+  pointer-events: none;
 }
 
 .section2 {
@@ -191,12 +201,12 @@ body {
 
 .button {
   margin-top: 1.5rem;
-  padding: 1.2rem 2.5rem;
+  padding: 1rem 2rem;
   border-radius: 10rem;
   border: none;
   background-color: transparent;
   color: #dcd5ea;;
-  font-size: 1.2rem;
+  font-size: 1rem;
   position: relative;
   overflow: hidden;
   text-decoration: none;
