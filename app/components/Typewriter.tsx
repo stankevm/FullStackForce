@@ -6,6 +6,8 @@ interface TypewriterProps {
   typingSpeed?: number;
   deletingSpeed?: number;
   pause?: number;
+  staticPrefix?: string;
+  staticPrefixStyle?: React.CSSProperties;
 }
 
 const Typewriter: React.FC<TypewriterProps> = ({
@@ -13,6 +15,8 @@ const Typewriter: React.FC<TypewriterProps> = ({
   typingSpeed = 80,
   deletingSpeed = 40,
   pause = 700,
+  staticPrefix,
+  staticPrefixStyle,
 }) => {
   const [text, setText] = useState("");
   const [phraseIndex, setPhraseIndex] = useState(0);
@@ -42,7 +46,15 @@ const Typewriter: React.FC<TypewriterProps> = ({
     return () => clearTimeout(timeout);
   }, [text, isDeleting, phraseIndex, phrases, typingSpeed, deletingSpeed, pause]);
 
-  return <span>{text}<span className="typewriter-cursor">|</span></span>;
+  return (
+    <span>
+      {staticPrefix && (
+        <span style={staticPrefixStyle}>{staticPrefix}</span>
+      )}
+      {text}
+      <span className="typewriter-cursor">|</span>
+    </span>
+  );
 };
 
 export default Typewriter; 

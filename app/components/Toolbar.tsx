@@ -21,14 +21,16 @@ const Toolbar: React.FC = () => {
   }, []);
 
   return (
-    <nav className="toolbar">
+    <nav className={`toolbar ${showLogo ? "show-logo" : ""}`}> {/* add class for CSS */}
       <div
         className="logo"
-        style={{ opacity: showLogo ? 1 : 0, transition: "opacity 0.3s ease" }}
+        style={{ opacity: showLogo ? 1 : 0, transition: "opacity 0.5s ease" }}
       >
         FullStackForce
       </div>
-      <ul className="toolbar-links">
+      <ul
+        className={`toolbar-links ${showLogo ? "toolbar-links-right" : "toolbar-links-center"}`}
+      >
         <li>
           <a href="#services">Services</a>
         </li>

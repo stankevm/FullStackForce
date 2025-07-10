@@ -8,6 +8,8 @@ import TechBall from "./components/TechBall";
 import ComputerCanvas from "./components/ComputerCanvas";
 import Toolbar from "./components/Toolbar";
 import GlowingLines from "./components/GlowingLines";
+import Particles from "./components/Particles";
+import RocketLaunchAnimation from "./components/RocketLaunchAnimation";
 
 export default function Home() {
   const services = [
@@ -88,12 +90,36 @@ export default function Home() {
       <main>
         {/* Section 1: Homepage */}
         <section className="section hero">
-          <GlowingLines />
+          {/*<GlowingLines />*/}
+          <Particles 
+            particleCount={500}
+            particleSpread={5}
+            speed={0.05}
+            particleColors={["#E2CBFF", "#b366ff", "#cfc3ef", "#9f67ff"]}
+            moveParticlesOnHover={true}
+            particleHoverFactor={0.5}
+            alphaParticles={true}
+            particleBaseSize={80}
+            sizeRandomness={0.8}
+            cameraDistance={12}
+            disableRotation={false}
+            className="absolute inset-0 z-0"
+          />
+          {/* Rocket launch animation */}
+          <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 30 }}>
+            <RocketLaunchAnimation autoStart={true} showInfo={false} width="100%" height="100vh" />
+          </div>
           <div className="hero-header">
             <h1>FullStackForce</h1>
             <div className="hero-typewriter">
-              Elite Software Engineers for<br />
               <Typewriter
+                staticPrefix="Elite Software Engineers for"
+                staticPrefixStyle={{ 
+                  fontFamily: "'Poppins', sans-serif",
+                  fontWeight: 200,
+                  display: 'block',
+                  color: '#ffffff',
+                }}
                 phrases={[
                   "End-to-End Product Development.",
                   "Cloud.",
