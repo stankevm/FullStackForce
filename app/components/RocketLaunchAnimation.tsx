@@ -38,31 +38,39 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
   const smokePlumeId = useRef(0);
 
   // Static part of the code (always visible)
-  const staticCode = `function setupCourse() {
-    let direction = [ [1, 0, 0], [0, 0.98, -0.17], [0, 0.17, 0.98] ];
-    let path = { x: 3400, y: 0, z: 18000 };
-    let computer = { ready: true, mode: "steady", time: now() };
-    random(); direction[1][1] *= 1.0001; path.z += 1; computer.mode = "go";
-}
-    
-function checkAll(fuel, engines, go) {
-    return fuel >= 80 && engines && go;
+  const staticCode = `const business = {
+    growth: 100,
+    profitable: true,
+    engines: true,
+    ready: true
+};
+
+function setStrategy() {
+    let marketVector = [ [1, 0, 0], [0, 0.98, -0.17], [0, 0.17, 0.98] ];
+    let expansionPath = { reach: 3400, stability: 0, scale: 18000 };
+    let system = { aligned: true, mode: "planning", timestamp: now() };
+    random(); marketVector[1][1] *= 1.0001; expansionPath.scale += 1;
+    system.mode = "execution";
 }
 
-function prepEngines() {
-    let engine = { state: "off", locked: true, warm: false };
-    engine.locked = false; engine.warm = true;
-    let tilt = { up: 0, side: 0, spin: 0 }; tilt.up += 5; tilt.side += 2;
-    engine.state = "ready";
+function verifyReadiness(growth, engines, ready) {
+    return growth >= 80 && engines && ready;
 }
 
-rocket.launch = function() {
-    if (!checkAll(this.fuel, this.engines, this.ready)) return;
-    setupCourse(); balanceFuel(); prepEngines(); startLaunch();
+function activateEngines() {
+    let core = { status: "idle", locked: true, warmedUp: false };
+    core.locked = false; core.warmedUp = true;
+    let vectorControl = { focus: 5, agility: 2, momentum: 0 };
+    core.status = "engaged";
+}
+
+business.launch = function() {
+    if (!verifyReadiness(this.growth, this.engines, this.ready)) return;
+    setStrategy(); optimizeResources(); activateEngines(); deploy();
 }\n`;
 
   //gets typed in real time
-  const dynamicCode = `function start(): void {\n      rocket.launch();\n}\n\nstart();`;
+  const dynamicCode = `function start() {\n      business.launch();\n}\n\n//may Fullstackforce skyrocket your growth ⇧; \nstart();`;
 
   useEffect(() => {
     if (!autoStart || !isTyping) return;
@@ -97,7 +105,7 @@ rocket.launch = function() {
     if (char === '\n') return 200;
     if (char === ' ') return 30;
     if (char === ';' || char === '{' || char === '}') return 150;
-    return 50;
+    return 20;
   };
 
   const startLaunchSequence = () => {
@@ -121,15 +129,14 @@ rocket.launch = function() {
       position += velocity;
       setRocketPosition(position);
 
-      // Generate smoke plumes during flight
       const currentTime = performance.now();
-      if (currentTime - lastPlumeTime > 40 && plumeCreationCount < maxPlumes) { // 80ms interval
+      if (currentTime - lastPlumeTime > 40 && plumeCreationCount < maxPlumes) { // 40ms interval
         const id = smokePlumeId.current++;
         const side = (Math.random() > 0.5) ? 1 : -1;
         const style = {
             position: 'absolute',
-            bottom: `${30 + position}px`, // Use current position
-            left: '70%',
+            bottom: `${-40 + position}px`,  
+            left: '66%',
             width: `${100 + Math.random() * 100}px`,
             height: `${100 + Math.random() * 100}px`,
             background: 'radial-gradient(circle, rgba(231, 188, 250, 0.16) 0%, rgba(195, 155, 227, 0.15) 70%)',
@@ -200,7 +207,7 @@ rocket.launch = function() {
           left: '22%',
           transform: 'translateX(0%)',
           width: '60%',
-          height: '700px',
+          height: '800px',
           background: 'transparent',
           padding: '20px',
           boxSizing: 'border-box',
@@ -212,7 +219,7 @@ rocket.launch = function() {
         }}
       >
         <div style={{
-          color: '#ffffff',
+          color: '#FFFFFFBA',
           fontSize: '25px',
           lineHeight: '1.5',
           whiteSpace: 'pre-wrap',
@@ -240,7 +247,7 @@ rocket.launch = function() {
         style={{
           position: 'absolute',
           bottom: '20px',
-          left: '70%',
+          left: '66%',
           transform: `translateX(-50%) translateY(-${rocketPosition}px) scale(0.7)`,
           transformOrigin: 'bottom center',
           width: '60px',
@@ -257,7 +264,7 @@ rocket.launch = function() {
           transform: 'translateX(-50%)',
           width: '30px',
           height: '180px',
-          background: 'linear-gradient(to right, #e8e8e8, #ffffff, #d0d0d0)',
+          background: 'linear-gradient(to right, #909090, #b0b0b0, #808080)',
           borderRadius: '15px 15px 6px 6px',
           boxShadow: 'inset -3px 0 8px rgba(0,0,0,0.1)'
         }} />
@@ -270,7 +277,7 @@ rocket.launch = function() {
           transform: 'translateX(-50%)',
           width: '24px',
           height: '45px',
-          background: 'linear-gradient(to right, #f0f0f0, #ffffff, #e0e0e0)',
+          background: 'linear-gradient(to right, #a0a0a0, #b8b8b8, #989898)',
           borderRadius: '12px 12px 4px 4px',
           boxShadow: 'inset -2px 0 6px rgba(0,0,0,0.1)'
         }} />
@@ -318,7 +325,7 @@ rocket.launch = function() {
           left: '1px',
           width: '12px',
           height: '140px',
-          background: 'linear-gradient(to right, #ddd, #fff, #ccc)',
+          background: 'linear-gradient(to right, #888888, #a0a0a0, #787878)',
           borderRadius: '6px 6px 3px 3px',
           boxShadow: 'inset -1px 0 4px rgba(0,0,0,0.1)'
         }} />
@@ -328,7 +335,7 @@ rocket.launch = function() {
           right: '1px',
           width: '12px',
           height: '140px',
-          background: 'linear-gradient(to right, #ddd, #fff, #ccc)',
+          background: 'linear-gradient(to right, #888888, #a0a0a0, #787878)',
           borderRadius: '6px 6px 3px 3px',
           boxShadow: 'inset -1px 0 4px rgba(0,0,0,0.1)'
         }} />
@@ -396,7 +403,7 @@ rocket.launch = function() {
             <div style={{
               position: 'absolute',
               bottom: '-15px',
-              right: '6px',
+              right: '-2px',
               width: '8px',
               height: '15px',
               background: 'linear-gradient(to bottom, #ff3838, #ff6b35, #f9ca24)',

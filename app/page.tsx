@@ -135,9 +135,14 @@ export default function Home() {
               <ComputerCanvas />
             </div>*/}
             <div>
-              <a href="#page-bottom" className="button" data-text="Let's Talk">Let&apos;s Talk</a>
+              <a href="#page-bottom" className="button">
+                <span>Let&apos;s Talk</span>
+                <svg>
+                  <rect rx="28" ry="28"></rect>
+                </svg>
+              </a>
             </div>
-            <p className="hero-quote">May the FullStackForce skyrocket your growth.</p>
+            {/*<p className="hero-quote">May the FullStackForce skyrocket your growth.</p>*/}
           </div>
         </section>
 
