@@ -204,7 +204,7 @@ business.launch = function() {
         style={{
           position: 'absolute',
           bottom: '15px', 
-          left: '22%',
+          left: '21%',
           transform: 'translateX(0%)',
           width: '60%',
           height: '800px',

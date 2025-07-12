@@ -347,6 +347,7 @@ body {
   border-radius: 2rem;
   font-size: 1.2rem;
   font-weight: 500;
+  font-family: 'Poppins', sans-serif;
   transition: transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
   cursor: default;
   will-change: transform;
@@ -513,8 +514,8 @@ body {
   transform: translate(-50%, -50%);
   background: linear-gradient(
     45deg,
-    rgba(95, 33, 159, 0.8),
-    rgba(73, 45, 101, 0.8)
+    rgba(106, 90, 205, 0.4),
+    rgba(135, 206, 250, 0.3)
   );
   mask: linear-gradient(#0000, #0000),
     conic-gradient(
@@ -539,10 +540,9 @@ body {
   transition: opacity 0.3s ease;
   background: radial-gradient(
     circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(158, 75, 203, 0.65) 0%,
-    rgba(199, 95, 255, 0.45) 25%,
-    rgba(69, 24, 93, 0.18) 50%,
-    transparent 75%
+    rgba(105, 90, 205, 0.199) 0%,
+    rgba(84, 90, 129, 0.2) 35%,
+    transparent 70%
   );
   filter: blur(25px); 
   will-change: transform, opacity;
