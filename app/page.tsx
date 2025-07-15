@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useRef, useState } from "react";
 {/*import Image from 'next/image'*/}
 import Typewriter from "./components/Typewriter";
 import ServiceCard from './components/ServiceCard';
@@ -14,6 +15,28 @@ import RocketLaunchAnimation from "./components/RocketLaunchAnimation";
 import Orb from "./components/GlowingCircle";
 
 export default function Home() {
+  const missionRef = useRef(null);
+  const [missionIsVisible, setMissionIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting) {
+          setMissionIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (missionRef.current) {
+      observer.observe(missionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   const services = [
     {
       title: "Advisory & CTO-as-a-Service",
@@ -151,21 +174,24 @@ export default function Home() {
         {/* Section 2: Delivery Flow, Services, Projects, Why Work With Us */}
         <section id="section2" className="section section2">
           <Aurora
-            colorStops={["#371F5C", "#872adf", "#4D36AB"]}
+            colorStops={["#371F5C", "#6B1DB4", "#4D36AB"]}
             amplitude={0.5}
-            blend={0.9}
+            blend={0.8}
             speed={1.5}
             brightness={1.4}
             contrast={1.5}
-            opacity={0.25}
+            opacity={0.3}
             edgeBrightness={0.5}
           />
           <div className="section-content">
-            <div className="mission-statement">
-              <p>We deliver high-quality software with precision and speed.</p>
-              <p>Empower clients through technology and transparency.</p>
-              <p>Build scalable, secure, and maintainable systems.</p>
-              <p>Foster long-term partnerships based on trust and excellence.</p>
+            <div 
+              ref={missionRef} 
+              className={`mission-statement ${missionIsVisible ? 'visible' : ''}`}
+            >
+              <p>We <span className="mission-highlight">deliver</span> high-quality software with precision and speed.</p>
+              <p><span className="mission-highlight">Empower</span> clients through technology and transparency.</p>
+              <p><span className="mission-highlight">Build</span> scalable, secure, and maintainable systems.</p>
+              <p><span className="mission-highlight">Foster</span> long-term partnerships based on trust and excellence.</p>
             </div>
 
             {/*<div className="glowing-circles-container">
@@ -266,13 +292,13 @@ export default function Home() {
             </div>
             {/* Aurora at bottom - upside down */}
             <Aurora
-              colorStops={["#371F5C", "#872adf", "#4D36AB"]}
+              colorStops={["#371F5C", "#6B1DB4", "#4D36AB"]}
               amplitude={0.5}
-              blend={0.9}
+              blend={0.8}
               speed={1.5}
               brightness={1.4}
               contrast={1.5}
-              opacity={0.25}
+              opacity={0.3}
               edgeBrightness={0.5}
               rotation={180}
               className="aurora-container-bottom"

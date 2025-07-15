@@ -176,7 +176,7 @@ body {
 }
 
 .section2 .section-content h2:first-of-type {
-  margin-top: 33rem;
+  margin-top: 30rem;
 }
 
 .mission-statement {
@@ -197,7 +197,33 @@ body {
 
 .mission-statement p {
   margin: 1rem 0;
-  opacity: 0.9;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease-out, transform 0.6s ease-out;
+}
+
+.mission-statement.visible p {
+  opacity: 1.0;
+  transform: translateY(0);
+}
+
+.mission-statement.visible p:nth-child(1) {
+  transition-delay: 0.2s;
+}
+.mission-statement.visible p:nth-child(2) {
+  transition-delay: 0.3s;
+}
+.mission-statement.visible p:nth-child(3) {
+  transition-delay: 0.4s;
+}
+.mission-statement.visible p:nth-child(4) {
+  transition-delay: 0.5s;
+}
+
+.mission-statement .mission-highlight {
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 700;
+  color: #2a133f;
 }
 
 .button {
