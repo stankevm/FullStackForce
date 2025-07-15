@@ -18,8 +18,8 @@ const BallMesh: React.FC<TechBallProps> = ({ imgUrl, color = "#ffffff", multiSid
 
   useFrame(() => {
     if (meshRef.current) {
-      meshRef.current.rotation.y += 0.01;
-      meshRef.current.rotation.x += 0.005;
+      meshRef.current.rotation.y += 0.005;
+      meshRef.current.rotation.x += 0.000;
     }
   });
 
