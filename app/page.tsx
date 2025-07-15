@@ -8,8 +8,10 @@ import TechBall from "./components/TechBall";
 import ComputerCanvas from "./components/ComputerCanvas";
 import Toolbar from "./components/Toolbar";
 import GlowingLines from "./components/GlowingLines";
+import Aurora from "./components/Aurora";
 import Particles from "./components/Particles";
 import RocketLaunchAnimation from "./components/RocketLaunchAnimation";
+import Orb from "./components/GlowingCircle";
 
 export default function Home() {
   const services = [
@@ -147,7 +149,17 @@ export default function Home() {
         </section>
 
         {/* Section 2: Delivery Flow, Services, Projects, Why Work With Us */}
-        <section className="section section2">
+        <section id="section2" className="section section2">
+          <Aurora
+            colorStops={["#371F5C", "#872adf", "#4D36AB"]}
+            amplitude={0.5}
+            blend={0.9}
+            speed={1.5}
+            brightness={1.4}
+            contrast={1.5}
+            opacity={0.25}
+            edgeBrightness={0.5}
+          />
           <div className="section-content">
             <div className="mission-statement">
               <p>We deliver high-quality software with precision and speed.</p>
@@ -155,6 +167,27 @@ export default function Home() {
               <p>Build scalable, secure, and maintainable systems.</p>
               <p>Foster long-term partnerships based on trust and excellence.</p>
             </div>
+
+            {/*<div className="glowing-circles-container">
+              <div className="circle-wrapper circle-1">
+                <Orb hue={320} hoverIntensity={0.3} forceHoverState={true} />
+              </div>
+              <div className="circle-wrapper circle-2">
+                <Orb hue={320} hoverIntensity={0.3} forceHoverState={true} />
+              </div>
+              <div className="circle-wrapper circle-3">
+                <Orb hue={320} hoverIntensity={0.3} forceHoverState={true} />
+              </div>
+              <div className="circle-wrapper circle-4">
+                <Orb hue={320} hoverIntensity={0.3} forceHoverState={true} />
+              </div>
+              <div className="circle-wrapper circle-5">
+                <Orb hue={320} hoverIntensity={0.3} forceHoverState={true} />
+              </div>
+              <div className="circle-wrapper circle-6">
+                <Orb hue={320} hoverIntensity={0.3} forceHoverState={true} />
+              </div>
+            </div>*/}
 
             <h2>End-to-end Delivery Flow</h2>
             <div className="delivery-flow">
@@ -231,11 +264,18 @@ export default function Home() {
               <p>We speak business and code.</p>
               <p>Fast ramp-up. Proven delivery.</p>
             </div>
-            {/*lines image */}
-            <img
-              src="/lines_light_back.png"
-              alt="Decorative lines"
-              className="full-width-img big-lines mt-8 select-none pointer-events-none"
+            {/* Aurora at bottom - upside down */}
+            <Aurora
+              colorStops={["#371F5C", "#872adf", "#4D36AB"]}
+              amplitude={0.5}
+              blend={0.9}
+              speed={1.5}
+              brightness={1.4}
+              contrast={1.5}
+              opacity={0.25}
+              edgeBrightness={0.5}
+              rotation={180}
+              className="aurora-container-bottom"
             />
           </div>
         </section>
