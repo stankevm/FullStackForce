@@ -31,6 +31,8 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
   const [showFlame, setShowFlame] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
   const [smokePlumes, setSmokePlumes] = useState<any[]>([]);
+  const [typingPhase, setTypingPhase] = useState(1); // 1 = first part, 2 = second part
+  const [showSecondPart, setShowSecondPart] = useState(false);
   
   const animationRef = useRef<number | null>(null);
   const rocketRef = useRef<HTMLDivElement | null>(null);
@@ -38,74 +40,133 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
   const smokePlumeId = useRef(0);
 
   // Static part of the code (always visible)
-  const staticCode = `const business = {
+  const staticCode = `
+const business = {
     growth: 100,
     profitable: true,
     engines: true,
     ready: true
 };
 
-function setStrategy() {
-    let marketVector = [ [1, 0, 0], [0, 0.98, -0.17], [0, 0.17, 0.98] ];
-    let expansionPath = { reach: 3400, stability: 0, scale: 18000 };
-    let system = { aligned: true, mode: "planning", timestamp: now() };
-    random(); marketVector[1][1] *= 1.0001; expansionPath.scale += 1;
-    system.mode = "execution";
-}
-
 function verifyReadiness(growth, engines, ready) {
-    return growth >= 80 && engines && ready;
-}
-
-function activateEngines() {
-    let core = { status: "idle", locked: true, warmedUp: false };
-    core.locked = false; core.warmedUp = true;
-    let vectorControl = { focus: 5, agility: 2, momentum: 0 };
-    core.status = "engaged";
+    return growth >= 100 && engines && ready;
 }
 
 business.launch = function() {
-    if (!verifyReadiness(this.growth, this.engines, this.ready)) return;
-    setStrategy(); optimizeResources(); activateEngines(); deploy();
+    setStrategy();
+    optimizeResources();
+    deploy();
 }\n`;
 
   //gets typed in real time
-  const dynamicCode = `function start() {\n      business.launch();\n}\n\n//may Fullstackforce skyrocket your growth ⇧; \nstart();`;
+  const dynamicCodePart1 = `function start() {\n      business.launch();\n}\n\nstart();`;
+  const dynamicCodePart2 = `\n\n// may Fullstackforce skyrocket your growth 🚀;`;
 
   useEffect(() => {
     if (!autoStart || !isTyping) return;
 
     const timer = setTimeout(() => {
-      if (currentIndex < dynamicCode.length) {
+      const currentText = typingPhase === 1 ? dynamicCodePart1 : dynamicCodePart2;
+      
+      if (currentIndex < currentText.length) {
         setCurrentIndex(prev => prev + 1);
 
-        const currentText = dynamicCode.substring(0, currentIndex + 1);
-        if (currentText.includes('start();') && !launchInitiated) {
+        const typedText = currentText.substring(0, currentIndex + 1);
+        if (typedText.includes('start();') && !launchInitiated && typingPhase === 1) {
           setLaunchInitiated(true);
           setTimeout(() => {
             startLaunchSequence();
+            // After 1.5 seconds, show the second part (comment)
+            setTimeout(() => {
+              setShowSecondPart(true);
+              setTypingPhase(2);
+              setCurrentIndex(0);
+            }, 1500);
           }, 500);
         }
       } else {
-        setIsTyping(false);
-        if (!launchInitiated) {
-          setLaunchInitiated(true);
-          setTimeout(() => {
-            startLaunchSequence();
-          }, 500);
+        if (typingPhase === 2) {
+          setIsTyping(false);
         }
       }
     }, getTypingDelay());
 
     return () => clearTimeout(timer);
-  }, [currentIndex, isTyping, launchInitiated, autoStart]);
+  }, [currentIndex, isTyping, launchInitiated, autoStart, typingPhase]);
 
   const getTypingDelay = () => {
-    const char = dynamicCode[currentIndex];
+    const currentText = typingPhase === 1 ? dynamicCodePart1 : dynamicCodePart2;
+    const char = currentText[currentIndex];
     if (char === '\n') return 200;
     if (char === ' ') return 30;
     if (char === ';' || char === '{' || char === '}') return 150;
     return 20;
+  };
+
+  const highlightCode = (code: string) => {
+    const keywords = ['const', 'let', 'var', 'function', 'return', 'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'break', 'continue', 'try', 'catch', 'finally', 'throw', 'new', 'typeof', 'instanceof', 'in', 'of', 'true', 'false', 'null', 'undefined', 'this', 'super', 'class', 'extends', 'import', 'export', 'from', 'default', 'as', 'async', 'await', 'void'];
+    const operators = ['=', '>', '<', '>=', '<=', '==', '===', '!=', '!==', '+', '-', '*', '/', '%', '&&', '||', '!', '++', '--', '+=', '-=', '*=', '/=', '%='];
+    
+    // Split the code into tokens while preserving whitespace, strings, and structure
+    const tokens = code.split(/(\s+|[{}();,.\[\]:=+\-*/%!<>&|]|\/\/.*$|"[^"]*"|'[^']*')/gm);
+    
+    return tokens.map((token, index) => {
+      // Skip empty tokens
+      if (!token) return null;
+      
+      // Comments
+      if (token.startsWith('//')) {
+        return <span key={index} style={{ color: '#e5d4ff' }}>{token}</span>;
+      }
+      
+      // Strings (quoted content)
+      if ((token.startsWith('"') && token.endsWith('"')) || (token.startsWith("'") && token.endsWith("'"))) {
+        return <span key={index} style={{ color: '#f8f4ff' }}>{token}</span>;
+      }
+      
+      // Keywords
+      if (keywords.includes(token)) {
+        return <span key={index} style={{ color: '#e8d8ff' }}>{token}</span>;
+      }
+      
+      // Numbers
+      if (/^\d+(\.\d+)?$/.test(token)) {
+        return <span key={index} style={{ color: '#f2ecfa' }}>{token}</span>;
+      }
+      
+      // Property names (after dots)
+      if (tokens[index - 1] === '.') {
+        return <span key={index} style={{ color: '#eed9ff' }}>{token}</span>;
+      }
+      
+      // Function names (before parentheses)
+      if (tokens[index + 1] === '(' || (tokens[index + 1] === ' ' && tokens[index + 2] === '(')) {
+        return <span key={index} style={{ color: '#d8c4ff' }}>{token}</span>;
+      }
+      
+      // Object keys (before colon)
+      if (tokens[index + 1] === ':' || (tokens[index + 1] === ' ' && tokens[index + 2] === ':')) {
+        return <span key={index} style={{ color: '#eed9ff' }}>{token}</span>;
+      }
+      
+      // Operators
+      if (operators.includes(token)) {
+        return <span key={index} style={{ color: '#f5f3f8' }}>{token}</span>;
+      }
+      
+      // Brackets and punctuation
+      if (/[{}();,.\[\]:]/.test(token)) {
+        return <span key={index} style={{ color: '#f5f3f8' }}>{token}</span>;
+      }
+      
+      // Variables and identifiers
+      if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(token)) {
+        return <span key={index} style={{ color: '#eed9ff' }}>{token}</span>;
+      }
+      
+      // Default text (whitespace, etc.)
+      return <span key={index} style={{ color: '#f5f3f8' }}>{token}</span>;
+    });
   };
 
   const startLaunchSequence = () => {
@@ -118,13 +179,18 @@ business.launch = function() {
 
   const animateRocket = () => {
     let position = 0;
-    let velocity = 1;
-    const acceleration = 0.3;
+    let velocity = 0.2;
+    let time = 0;
     let plumeCreationCount = 0;
     const maxPlumes = 50;
     let lastPlumeTime = 0;
 
     const animate = () => {
+      time += 0.016; // Approximate frame time at 60fps
+      
+      // Gradual acceleration that starts slow and increases over time
+      const acceleration = 0.1 + (time * 0.02); // Starts at 0.1, increases gradually
+      
       velocity += acceleration;
       position += velocity;
       setRocketPosition(position);
@@ -135,8 +201,8 @@ business.launch = function() {
         const side = (Math.random() > 0.5) ? 1 : -1;
         const style = {
             position: 'absolute',
-            bottom: `${-40 + position}px`,  
-            left: '66%',
+            bottom: `${60 + position}px`,  
+            left: '50%',
             width: `${100 + Math.random() * 100}px`,
             height: `${100 + Math.random() * 100}px`,
             background: 'radial-gradient(circle, rgba(231, 188, 250, 0.16) 0%, rgba(195, 155, 227, 0.15) 70%)',
@@ -175,6 +241,8 @@ business.launch = function() {
     setRocketPosition(0);
     setShowFlame(false);
     setParticles([]);
+    setTypingPhase(1);
+    setShowSecondPart(false);
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
     }
@@ -199,25 +267,25 @@ business.launch = function() {
       }}
     >
       {/* Code */}
-      <div
-        className="codeContainer"
-        style={{
-          position: 'absolute',
-          bottom: '15px', 
-          left: '21%',
-          transform: 'translateX(0%)',
-          width: '60%',
-          height: '800px',
-          background: 'transparent',
-          padding: '20px',
-          boxSizing: 'border-box',
-          overflow: 'hidden', 
-          zIndex: 10,
-          pointerEvents: 'none',
-          textAlign: 'left',
-          perspective: '550px' // delete to remove 3D effect like in starwars
-        }}
-      >
+              <div
+          className="codeContainer"
+          style={{
+            position: 'absolute',
+            bottom: '15px', 
+            left: '21%',
+            transform: 'translateX(0%)',
+            width: '60%',
+            height: '800px',
+            background: 'transparent',
+            padding: '20px',
+            boxSizing: 'border-box',
+            overflow: 'hidden', 
+            zIndex: 10,
+            pointerEvents: 'none',
+            textAlign: 'left',
+            perspective: '550px', // delete to remove 3D effect like in starwars
+          }}
+        >
         <div style={{
           color: '#FFFFFFBA',
           fontSize: '25px',
@@ -235,8 +303,10 @@ business.launch = function() {
             left: 0,
             right: 0
           }}>
-            {staticCode + dynamicCode.substring(0, currentIndex)}
-            {isTyping && <span style={{ animation: 'blink 1s infinite' }}>█</span>}
+            {highlightCode(staticCode + 
+              (showSecondPart ? dynamicCodePart1 + dynamicCodePart2.substring(0, currentIndex) : dynamicCodePart1.substring(0, currentIndex))
+            )}
+            {isTyping && <span style={{ animation: 'blink 1s infinite', color: '#FFFFFF' }}>█</span>}
           </div>
         </div>
       </div>
@@ -246,8 +316,8 @@ business.launch = function() {
         ref={rocketRef}
         style={{
           position: 'absolute',
-          bottom: '20px',
-          left: '66%',
+          bottom: '0px',
+          left: '50%',
           transform: `translateX(-50%) translateY(-${rocketPosition}px) scale(0.7)`,
           transformOrigin: 'bottom center',
           width: '60px',
