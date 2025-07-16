@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap');
+
 
 html {
   scroll-behavior: smooth;
@@ -229,8 +229,8 @@ body {
 .button {
   margin-top: 1.5rem;
   padding: 1rem 2rem;
-  border-radius: 10rem;
-  border: none;
+  border-radius: 2rem;
+  border: 2px solid rgba(135, 42, 223, 0.6);
   background-color: #2a323c;
   color: #dcd5ea;
   font-size: 1rem;
@@ -238,42 +238,23 @@ body {
   text-decoration: none;
   font-family: 'inter';
   z-index: 1;
-  overflow: visible;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s ease-in-out;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 20px rgba(135, 42, 223, 0.3);
 }
 
 .button:hover {
   background-color: #2e3948;
+  border-color: #a748ff;
+  box-shadow: 0 0 30px rgba(167, 72, 255, 0.5);
+  transform: translateY(-2px);
 }
 
 .button span {
   position: relative;
   z-index: 2;
-}
-
-.button svg {
-  position: absolute;
-  top: -20px;
-  left: -20px;
-  width: calc(100% + 40px);
-  height: calc(100% + 40px);
-  pointer-events: none;
-}
-
-.button svg rect {
-  x: 20px;
-  y: 20px;
-  width: calc(100% - 40px);
-  height: calc(100% - 40px);
-  fill: none;
-  stroke: #872adf;
-  stroke-width: 2px;
-  rx: 28px;
-  ry: 28px;
-  filter: drop-shadow(0 0 2px #a748ff) drop-shadow(0 0 5px #a748ff);
 }
 
 .hero-header {

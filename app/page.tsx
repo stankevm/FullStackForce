@@ -162,9 +162,6 @@ export default function Home() {
             <div>
               <a href="#page-bottom" className="button">
                 <span>Let&apos;s Talk</span>
-                <svg>
-                  <rect rx="28" ry="28"></rect>
-                </svg>
               </a>
             </div>
             {/*<p className="hero-quote">May the FullStackForce skyrocket your growth.</p>*/}
