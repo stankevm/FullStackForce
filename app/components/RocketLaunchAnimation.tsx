@@ -60,7 +60,7 @@ business.launch = function() {
 
   //gets typed in real time
   const dynamicCodePart1 = `function start() {\n      business.launch();\n}\n\nstart();`;
-  const dynamicCodePart2 = `\n\n// may Fullstackforce skyrocket your growth 🚀;`;
+  const dynamicCodePart2 = `\n\n// may Fullstackforce skyrocket your growth;`;
 
   useEffect(() => {
     if (!autoStart || !isTyping) return;
@@ -201,7 +201,7 @@ business.launch = function() {
         const side = (Math.random() > 0.5) ? 1 : -1;
         const style = {
             position: 'absolute',
-            bottom: `${60 + position}px`,  
+            bottom: `${-40 + position}px`,  
             left: '50%',
             width: `${100 + Math.random() * 100}px`,
             height: `${100 + Math.random() * 100}px`,

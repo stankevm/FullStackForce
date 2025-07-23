@@ -283,6 +283,44 @@ body {
   
 }
 
+/* --- Responsive Hero Section --- */
+@media (max-width: 768px) {
+  .hero-header {
+    width: 90%;
+    top: 25%;
+  }
+
+  .hero-header h1 {
+    font-size: 60px;
+  }
+
+  .hero-typewriter {
+    font-size: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .button {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-header {
+    top: 30%;
+  }
+
+  .hero-header h1 {
+    font-size: 45px;
+    margin-top: 5rem;
+  }
+
+  .hero-typewriter {
+    font-size: 1rem;
+    margin-top: 1.5rem;
+  }
+}
+
 .typewriter-cursor {
   display: inline-block;
   width: 1ch;
