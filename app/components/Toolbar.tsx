@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 const Toolbar: React.FC = () => {
   const [showLogo, setShowLogo] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const heroSection = document.querySelector<HTMLElement>(".hero");
@@ -19,6 +20,10 @@ const Toolbar: React.FC = () => {
     observer.observe(heroSection);
     return () => observer.disconnect();
   }, []);
+
+  const handleLinkClick = () => {
+    setIsMenuOpen(false);
+  };
 
   return (
     <nav className={`toolbar ${showLogo ? "show-logo" : ""}`}> {/* add class for CSS */}
@@ -44,6 +49,29 @@ const Toolbar: React.FC = () => {
           <a href="#page-bottom">Contact</a>
         </li>
       </ul>
+
+      <button
+        className="mobile-menu-button"
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        aria-label="Toggle menu"
+      >
+        <div className={`hamburger-icon ${isMenuOpen ? "open" : ""}`}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+
+      {isMenuOpen && (
+        <div className="mobile-menu">
+          <ul>
+            <li><a href="#services" onClick={handleLinkClick}>Services</a></li>
+            <li><a href="#projects" onClick={handleLinkClick}>Projects</a></li>
+            <li><a href="#team" onClick={handleLinkClick}>Team</a></li>
+            <li><a href="#page-bottom" onClick={handleLinkClick}>Contact</a></li>
+          </ul>
+        </div>
+      )}
     </nav>
   );
 };

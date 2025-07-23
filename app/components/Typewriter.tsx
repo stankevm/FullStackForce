@@ -8,6 +8,7 @@ interface TypewriterProps {
   pause?: number;
   staticPrefix?: string;
   staticPrefixStyle?: React.CSSProperties;
+  staticPrefixClassName?: string;
 }
 
 const Typewriter: React.FC<TypewriterProps> = ({
@@ -17,6 +18,7 @@ const Typewriter: React.FC<TypewriterProps> = ({
   pause = 700,
   staticPrefix,
   staticPrefixStyle,
+  staticPrefixClassName,
 }) => {
   const [text, setText] = useState("");
   const [phraseIndex, setPhraseIndex] = useState(0);
@@ -49,7 +51,7 @@ const Typewriter: React.FC<TypewriterProps> = ({
   return (
     <span>
       {staticPrefix && (
-        <span style={staticPrefixStyle}>{staticPrefix}</span>
+        <span style={staticPrefixStyle} className={staticPrefixClassName}>{staticPrefix}</span>
       )}
       {text}
       <span className="typewriter-cursor">|</span>

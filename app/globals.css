@@ -58,7 +58,8 @@ body {
 }
 
 .hero-typewriter {
-  font-size: 1.9rem;
+  /* font-size: 1.9rem; */
+  font-size: clamp(1rem, 0.46rem + 1.8vw, 1.9rem); /*from 16px to 30.4px*/
   margin-top: 3rem;
   margin-bottom: 1rem;
   font-weight: 500;
@@ -66,6 +67,10 @@ body {
   margin-left: 0rem;
   text-align: center;
   font-family: 'Courier New', monospace;
+}
+
+.hero-typewriter .typewriter-prefix {
+  font-size: 0.9em; 
 }
 
 .hero-quote {
@@ -269,7 +274,7 @@ body {
 
 .hero-header h1 {
   font-family: 'Funnel Display', sans-serif;
-  font-size: 85px;
+  font-size: clamp(2.3125rem, 1.5rem + 4.5vw, 5.3125rem); 
   color: #fff;
   margin: 3rem 0;
   letter-spacing: -1px;
@@ -290,12 +295,7 @@ body {
     top: 25%;
   }
 
-  .hero-header h1 {
-    font-size: 60px;
-  }
-
   .hero-typewriter {
-    font-size: 1.5rem;
     margin-top: 2rem;
   }
 
@@ -307,16 +307,14 @@ body {
 
 @media (max-width: 480px) {
   .hero-header {
-    top: 30%;
+    top: 17%;
   }
 
   .hero-header h1 {
-    font-size: 45px;
     margin-top: 5rem;
   }
 
   .hero-typewriter {
-    font-size: 1rem;
     margin-top: 1.5rem;
   }
 }
@@ -780,11 +778,9 @@ body {
   backdrop-filter: blur(10px);
   z-index: 1000;
   box-sizing: border-box;
-  /* Ensure relative positioning context for absolute children */
   overflow: visible;
 }
 
-/* Toolbar links transition positioning */
 .toolbar-links {
   position: absolute;
   top: 50%;
@@ -800,7 +796,7 @@ body {
 .toolbar-links-center {
   left: 50%;
   transform: translate(-50%, -50%);
-  gap: 10rem; /* increase spacing between links on hero */
+  gap: 10rem;
 }
 
 .toolbar-links-right {
@@ -860,7 +856,7 @@ body {
   left: 0;
   right: 0;
   bottom: 10;
-  height: 120%; /* extend upward to avoid clipping */
+  height: 120%; 
   pointer-events: none;
   overflow: hidden;
   z-index: 5;
@@ -905,5 +901,120 @@ body {
   left: 0;
   z-index: 1;
   pointer-events: none;
+}
+
+
+/*Mobile Menu*/
+.mobile-menu-button {
+  display: none; 
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1010;
+  padding: 0.5rem;
+}
+
+.hamburger-icon {
+  width: 29px;
+  height: 20px;
+  position: relative;
+  transform: rotate(0deg);
+  transition: .5s ease-in-out;
+  cursor: pointer;
+}
+
+.hamburger-icon span {
+  display: block;
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  background: #fff;
+  border-radius: 9px;
+  opacity: 1;
+  left: 0;
+  transform: rotate(0deg);
+  transition: .25s ease-in-out;
+}
+
+.hamburger-icon span:nth-child(1) {
+  top: 0px;
+}
+
+.hamburger-icon span:nth-child(2) {
+  top: 9px;
+}
+
+.hamburger-icon span:nth-child(3) {
+  top: 18px;
+}
+
+.hamburger-icon.open span:nth-child(1) {
+  top: 9px;
+  transform: rotate(135deg);
+}
+
+.hamburger-icon.open span:nth-child(2) {
+  opacity: 0;
+  left: -60px;
+}
+
+.hamburger-icon.open span:nth-child(3) {
+  top: 9px;
+  transform: rotate(-135deg);
+}
+
+.mobile-menu {
+  position: absolute;
+  top: 55px; 
+  left: 0;
+  right: 0;
+  background: #1c2028;
+  backdrop-filter: blur(10px);
+  padding: 1rem 0;
+  z-index: 999;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.mobile-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.mobile-menu ul li a {
+  display: block;
+  padding: 1rem 0;
+  color: #fff;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+
+.mobile-menu ul li a:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .toolbar {
+    height: 55px;
+  }
+  .toolbar-links {
+    display: none; 
+  }
+
+  .mobile-menu-button {
+    display: block; 
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .toolbar-links-center {
+    gap: 1.5rem; 
+  }
 }
 

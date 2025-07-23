@@ -144,8 +144,8 @@ export default function Home() {
                   fontWeight: 200,
                   display: 'block',
                   color: '#f2f1f5',
-                  fontSize: '1.7rem',
                 }}
+                staticPrefixClassName="typewriter-prefix"
                 phrases={[
                   "End-to-End Product Development.",
                   "Cloud.",
