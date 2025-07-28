@@ -17,24 +17,44 @@ import Orb from "./components/GlowingCircle";
 export default function Home() {
   const missionRef = useRef(null);
   const [missionIsVisible, setMissionIsVisible] = useState(false);
+  const whyWorkRef = useRef(null);
+  const [whyWorkIsVisible, setWhyWorkIsVisible] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
+    const missionObserver = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
         if (entry.isIntersecting) {
           setMissionIsVisible(true);
-          observer.disconnect();
+          missionObserver.disconnect();
         }
       },
       { threshold: 0.2 }
     );
 
     if (missionRef.current) {
-      observer.observe(missionRef.current);
+      missionObserver.observe(missionRef.current);
     }
 
-    return () => observer.disconnect();
+    const whyWorkObserver = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting) {
+          setWhyWorkIsVisible(true);
+          whyWorkObserver.disconnect();
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (whyWorkRef.current) {
+      whyWorkObserver.observe(whyWorkRef.current);
+    }
+
+    return () => {
+      missionObserver.disconnect();
+      whyWorkObserver.disconnect();
+    };
   }, []);
 
   const services = [
@@ -132,7 +152,7 @@ export default function Home() {
           />
           {/* Rocket launch animation */}
           <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 30 }}>
-            <RocketLaunchAnimation autoStart={true} showInfo={false} width="100%" height="100vh" />
+            <RocketLaunchAnimation autoStart={true} showInfo={false} width="100%" height="110vh" />
           </div>
           <div className="hero-header">
             <h1>FullStackForce</h1>
@@ -173,7 +193,7 @@ export default function Home() {
           <Aurora
             colorStops={["#371F5C", "#6B1DB4", "#4D36AB"]}
             amplitude={0.5}
-            blend={0.8}
+            blend={0.7}
             speed={1.5}
             brightness={1.4}
             contrast={1.5}
@@ -282,7 +302,10 @@ export default function Home() {
             </div>
 
             <h2 style={{marginTop: '7rem'}}>Why work with us?</h2>
-            <div className="why-work-statement">
+            <div
+              ref={whyWorkRef}
+              className={`why-work-statement ${whyWorkIsVisible ? 'visible' : ''}`}
+            >
               <p>No juniors, no BS — just senior devs.</p>
               <p>We speak business and code.</p>
               <p>Fast ramp-up. Proven delivery.</p>

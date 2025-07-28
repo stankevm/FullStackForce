@@ -271,7 +271,7 @@ business.launch = function() {
           className="codeContainer"
           style={{
             position: 'absolute',
-            bottom: '15px', 
+            bottom: '9%', 
             left: '21%',
             transform: 'translateX(0%)',
             width: '60%',
@@ -316,7 +316,7 @@ business.launch = function() {
         ref={rocketRef}
         style={{
           position: 'absolute',
-          bottom: '0px',
+          bottom: '9%',
           left: '50%',
           transform: `translateX(-50%) translateY(-${rocketPosition}px) scale(0.7)`,
           transformOrigin: 'bottom center',
