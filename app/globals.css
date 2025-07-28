@@ -59,7 +59,9 @@ body {
 
 .hero-typewriter {
   /* font-size: 1.9rem; */
-  font-size: clamp(1rem, 0.46rem + 1.8vw, 1.9rem); /*from 16px to 30.4px*/
+  font-size: clamp(1rem, 0.46rem + 1.8vw, 1.9rem); /*from16px to 30.4px */
+  min-height: 4.2em; 
+  line-height: 1.4; 
   margin-top: 3rem;
   margin-bottom: 1rem;
   font-weight: 500;
@@ -232,7 +234,7 @@ body {
 }
 
 .button {
-  margin-top: 1.5rem;
+  margin-top: 0rem;
   padding: 1rem 2rem;
   border-radius: 2rem;
   border: 2px solid rgba(135, 42, 223, 0.6);
