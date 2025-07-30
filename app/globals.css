@@ -586,8 +586,8 @@ body {
   transition: opacity 0.3s ease;
   background: radial-gradient(
     circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    #fada7aa1 0%,
-    #fada7a73 35%,
+    #c57afa59 0%,
+    #c57afa3b 35%,
     transparent 30%
   );
   filter: blur(25px); 
