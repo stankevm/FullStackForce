@@ -88,7 +88,7 @@ body {
 .section2 {
   position: relative;
   overflow: hidden;
-  background-color: #E9E9E9;
+  background-color: #f5f3f3; /*#E9E9E9*/
   color: #222;
   border-radius: 2.5rem;
   z-index: 20;
@@ -586,9 +586,9 @@ body {
   transition: opacity 0.3s ease;
   background: radial-gradient(
     circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(105, 90, 205, 0.199) 0%,
-    rgba(84, 90, 129, 0.2) 35%,
-    transparent 70%
+    #ffcc007b 0%,
+    #ffcc0053 35%,
+    transparent 30%
   );
   filter: blur(25px); 
   will-change: transform, opacity;
