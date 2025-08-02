@@ -60,7 +60,7 @@ business.launch = function() {
 
   //gets typed in real time
   const dynamicCodePart1 = `function start() {\n      business.launch();\n}\n\nstart();`;
-  const dynamicCodePart2 = `\n\n// may Fullstackforce skyrocket your growth;`;
+  const dynamicCodePart2 = `\n\n// may Fullstackforce skyrocket your growth🚀;`;
 
   useEffect(() => {
     if (!autoStart || !isTyping) return;
@@ -201,11 +201,11 @@ business.launch = function() {
         const side = (Math.random() > 0.5) ? 1 : -1;
         const style = {
             position: 'absolute',
-            bottom: `${-40 + position}px`,  
+            bottom: `${-200 + position}px`,  
             left: '50%',
             width: `${100 + Math.random() * 100}px`,
             height: `${100 + Math.random() * 100}px`,
-            background: 'radial-gradient(circle, rgba(231, 188, 250, 0.16) 0%, rgba(195, 155, 227, 0.15) 70%)',
+            background: 'radial-gradient(circle,rgba(124, 58, 237, 0.14) 0%, rgba(187, 155, 227, 0.13) 70%)',
             borderRadius: '50%',
             filter: 'blur(20px)',
             transform: `translateX(-50%)`,
@@ -223,7 +223,7 @@ business.launch = function() {
         plumeCreationCount++;
       }
 
-      if (position < window.innerHeight + 200) {
+      if (position < window.innerHeight + 250) {
         animationRef.current = requestAnimationFrame(animate);
       } else {
         onLaunchComplete();
@@ -316,7 +316,7 @@ business.launch = function() {
         ref={rocketRef}
         style={{
           position: 'absolute',
-          bottom: '9%',
+          bottom: '-11.5%',
           left: '50%',
           transform: `translateX(-50%) translateY(-${rocketPosition}px) scale(0.7)`,
           transformOrigin: 'bottom center',
@@ -360,7 +360,7 @@ business.launch = function() {
           transform: 'translateX(-50%)',
           width: '10px',
           height: '10px',
-          background: 'radial-gradient(circle, #70a1ff, #3742fa)',
+          background: 'radial-gradient(circle,rgb(183, 112, 255),rgb(74, 28, 138))',
           borderRadius: '50%',
           border: '1px solid #2f3542',
           boxShadow: 'inset 1px 1px 3px rgba(255,255,255,0.5)'
@@ -449,7 +449,7 @@ business.launch = function() {
             transform: 'translateX(-50%)',
             width: '16px',
             height: '25px',
-            background: 'linear-gradient(to bottom, #ff3838, #ff6b35, #f9ca24)',
+            background: 'linear-gradient(to bottom,rgb(136, 66, 174),rgb(164, 105, 196),rgb(198, 171, 215))',
             borderRadius: '0 0 50% 50%',
             animation: 'flicker 0.08s infinite alternate',
             filter: 'blur(0.5px)'
@@ -465,7 +465,7 @@ business.launch = function() {
               left: '6px',
               width: '8px',
               height: '15px',
-              background: 'linear-gradient(to bottom, #ff3838, #ff6b35, #f9ca24)',
+              background: 'linear-gradient(to bottom,rgb(136, 66, 174),rgb(164, 105, 196),rgb(198, 171, 215))',
               borderRadius: '0 0 50% 50%',
               animation: 'flicker 0.1s infinite alternate',
               filter: 'blur(0.3px)'
@@ -476,7 +476,7 @@ business.launch = function() {
               right: '-2px',
               width: '8px',
               height: '15px',
-              background: 'linear-gradient(to bottom, #ff3838, #ff6b35, #f9ca24)',
+              background: 'linear-gradient(to bottom,rgb(136, 66, 174),rgb(164, 105, 196),rgb(198, 171, 215))',
               borderRadius: '0 0 50% 50%',
               animation: 'flicker 0.09s infinite alternate',
               filter: 'blur(0.3px)'

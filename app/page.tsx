@@ -13,6 +13,7 @@ import Aurora from "./components/Aurora";
 import Particles from "./components/Particles";
 import RocketLaunchAnimation from "./components/RocketLaunchAnimation";
 import Orb from "./components/GlowingCircle";
+import LogoCarousel from "./components/LogoCarousel";
 
 export default function Home() {
   const missionRef = useRef(null);
@@ -114,6 +115,15 @@ export default function Home() {
     }
   ];
 
+  const techLogos = [
+    { src: '/icons/React.png', alt: 'React' },
+    { src: '/icons/NET.png', alt: '.NET' },
+    { src: '/icons/MongoDB.png', alt: 'MongoDB' },
+    { src: '/icons/sql.png', alt: 'SQL Server' },
+    { src: '/icons/azure.png', alt: 'Azure' },
+    { src: '/icons/AWS.png', alt: 'AWS' }
+  ];
+
   const projects = [
     {
       title: "E-commerce Platform",
@@ -155,7 +165,7 @@ export default function Home() {
             <RocketLaunchAnimation autoStart={true} showInfo={false} width="100%" height="110vh" />
           </div>
           <div className="hero-header">
-            <h1>FullStackForce</h1>
+            <h1><img className="hero-logo" />FullStackForce</h1>
             <div className="hero-typewriter">
               <Typewriter
                 staticPrefix="Elite Software Engineers for"
@@ -191,24 +201,30 @@ export default function Home() {
         {/* Section 2: Delivery Flow, Services, Projects, Why Work With Us */}
         <section id="section2" className="section section2">
           <Aurora
-            colorStops={["#371F5C", "#6B1DB4", "#4D36AB"]}
+            colorStops={["#5b02e1", "#6B1DB4", "#5b02e1"]}
             amplitude={0.5}
             blend={0.7}
             speed={1.5}
             brightness={1.4}
-            contrast={1.5}
+            contrast={1.9}
             opacity={0.3}
             edgeBrightness={0.5}
           />
           <div className="section-content">
-            <div 
-              ref={missionRef} 
-              className={`mission-statement ${missionIsVisible ? 'visible' : ''}`}
-            >
-              <p>We <span className="mission-highlight">deliver</span> high-quality software with precision and speed.</p>
-              <p><span className="mission-highlight">Empower</span> clients through technology and transparency.</p>
-              <p><span className="mission-highlight">Build</span> scalable, secure, and maintainable systems.</p>
-              <p><span className="mission-highlight">Foster</span> long-term partnerships based on trust and excellence.</p>
+            <div className="mission-container">
+              <div
+                ref={missionRef}
+                className={`mission-statement-text ${missionIsVisible ? 'visible' : ''}`}
+              >
+                <h3 className="mission-title">Let us help <br /> you grow</h3>
+                <p>We deliver high-quality software with precision and speed.</p>
+                <p>Empower clients through technology and transparency.</p>
+                <p>Build scalable, secure, and maintainable systems.</p>
+                <p>Foster long-term partnerships based on trust and excellence.</p>
+              </div>
+              <div className="mission-image">
+                <img src="/photo-mission.png" alt="Mission" />
+              </div>
             </div>
 
             {/*<div className="glowing-circles-container">
@@ -264,35 +280,7 @@ export default function Home() {
               ))}
             </div>
             {/*balls */}
-            <div style={{
-              display:'flex',
-              flexWrap:'wrap',
-              justifyContent:'center',
-              gap:'2.5rem',
-              margin:'3rem 0',
-              position: 'relative',
-              zIndex: 20
-            }}>
-              {[
-                {img:'/icons/React.png', label:'React'},
-                {img:'/icons/NET.png', label:'.NET'},
-                {img:'/icons/MongoDB.png', label:'MongoDB'},
-                {img:'/icons/sql.png', label:'SQL Server'},
-                {img:'/icons/azure.png', label:'Azure'},
-                {img:'/icons/AWS.png', label:'AWS'}
-              ].map((tech, i)=>(
-                <div key={i} style={{
-                  display:'flex',
-                  flexDirection:'column',
-                  alignItems:'center',
-                  position: 'relative',
-                  zIndex: 20
-                }}>
-                  <TechBall imgUrl={tech.img} color="#ead5ff" size={100} multiSide/>
-                  <p style={{marginTop:'0.5rem',fontWeight:500}}>{tech.label}</p>
-                </div>
-              ))}
-            </div>
+            <LogoCarousel logos={techLogos} />
 
             <h2 id="projects" style={{marginTop: '7rem'}}>Projects</h2>
             <div className="services-grid">
@@ -312,12 +300,12 @@ export default function Home() {
             </div>
             {/* Aurora at bottom - upside down */}
             <Aurora
-              colorStops={["#371F5C", "#6B1DB4", "#4D36AB"]}
+              colorStops={["#5b02e1", "#6B1DB4", "#5b02e1"]}
               amplitude={0.5}
               blend={0.8}
               speed={1.5}
               brightness={1.4}
-              contrast={1.5}
+              contrast={1.9}
               opacity={0.3}
               edgeBrightness={0.5}
               rotation={180}

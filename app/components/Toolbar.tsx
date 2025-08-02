@@ -26,11 +26,12 @@ const Toolbar: React.FC = () => {
   };
 
   return (
-    <nav className={`toolbar ${showLogo ? "show-logo" : ""}`}> {/* add class for CSS */}
+    <nav className={`toolbar ${showLogo ? "show-logo" : ""}`}> 
       <div
         className="logo"
         style={{ opacity: showLogo ? 1 : 0, transition: "opacity 0.5s ease" }}
       >
+        <img src="/logo.png" alt="FullStackForce Logo" className="logo-image" />
         FullStackForce
       </div>
       <ul
