@@ -28,11 +28,18 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
   const [isTyping, setIsTyping] = useState(true);
   const [launchInitiated, setLaunchInitiated] = useState(false);
   const [rocketPosition, setRocketPosition] = useState(0);
+  const [rocketXPosition, setRocketXPosition] = useState(0); // horizontal shift
   const [showFlame, setShowFlame] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
   const [smokePlumes, setSmokePlumes] = useState<any[]>([]);
   const [typingPhase, setTypingPhase] = useState(1); // 1 = first part, 2 = second part
   const [showSecondPart, setShowSecondPart] = useState(false);
+
+  // horizontal factor for diagonal trajectory (x shift per unit vertical)
+  const HORIZONTAL_FACTOR = 0.4;
+  // pre-computed angle so rocket tilts to match trajectory
+  const trajectoryAngle = -Math.atan(HORIZONTAL_FACTOR) * 180 / Math.PI;
+
   
   const animationRef = useRef<number | null>(null);
   const rocketRef = useRef<HTMLDivElement | null>(null);
@@ -60,7 +67,7 @@ business.launch = function() {
 
   //gets typed in real time
   const dynamicCodePart1 = `function start() {\n      business.launch();\n}\n\nstart();`;
-  const dynamicCodePart2 = `\n\n// may Fullstackforce skyrocket your growth🚀;`;
+  const dynamicCodePart2 = `\n\n////   may Fullstackforce skyrocket your growth 🚀 🚀 🚀`;
 
   useEffect(() => {
     if (!autoStart || !isTyping) return;
@@ -195,6 +202,10 @@ business.launch = function() {
       position += velocity;
       setRocketPosition(position);
 
+      // Update horizontal position to create diagonal flight path
+      const xPos = -position * HORIZONTAL_FACTOR;
+      setRocketXPosition(xPos);
+
       const currentTime = performance.now();
       if (currentTime - lastPlumeTime > 40 && plumeCreationCount < maxPlumes) { // 40ms interval
         const id = smokePlumeId.current++;
@@ -317,8 +328,8 @@ business.launch = function() {
         style={{
           position: 'absolute',
           bottom: '-11.5%',
-          left: '50%',
-          transform: `translateX(-50%) translateY(-${rocketPosition}px) scale(0.7)`,
+          right: '5%',
+          transform: `translateX(-50%) translateX(${rocketXPosition}px) translateY(-${rocketPosition}px) rotate(${trajectoryAngle}deg) scale(0.7)`,
           transformOrigin: 'bottom center',
           width: '60px',
           height: '250px',

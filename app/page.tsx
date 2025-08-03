@@ -319,12 +319,12 @@ export default function Home() {
           <div className="section-content">
             <h2 id="team" style={{ marginBottom: '4rem' }}>Meet our team</h2>
             <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '2rem', marginBottom: '2.5rem'}}>
-              {[
-                { name: 'Vigen Sh.', role: 'CTO – Strategy & Architecture', imageSrc: '/CTO.png' },
-                { name: 'Gera B.', role: 'CEO & R&D Lead', imageSrc: '/CEO.png' },
-                { name: 'Stas A.', role: 'Frontend Developer', imageSrc: '/person_on_toi.png' },
-                { name: 'Stas B.', role: 'Backend Developer', imageSrc: '/person_on_toi.png' },
-              ].map((member, idx) => (
+                          {[
+              { name: 'Vigen Sh.', role: 'CTO – Strategy & Architecture', imageSrc: 'https://via.placeholder.com/128x128/e2e8f0/64748b?text=V.S.' },
+              { name: 'Gera B.', role: 'CEO & R&D Lead', imageSrc: 'https://via.placeholder.com/128x128/e2e8f0/64748b?text=G.B.' },
+              { name: 'Stas A.', role: 'Frontend Developer', imageSrc: 'https://via.placeholder.com/128x128/e2e8f0/64748b?text=S.A.' },
+              { name: 'Stas B.', role: 'Backend Developer', imageSrc: 'https://via.placeholder.com/128x128/e2e8f0/64748b?text=S.B.' },
+            ].map((member, idx) => (
                 <TeamCard
                   key={idx}
                   imageSrc={member.imageSrc}
