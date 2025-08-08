@@ -196,7 +196,7 @@ business.launch = function() {
       time += 0.016; // Approximate frame time at 60fps
       
       // Gradual acceleration that starts slow and increases over time
-      const acceleration = 0.1 + (time * 0.02); // Starts at 0.1, increases gradually
+      const acceleration = 0.2 + (time * 0.02); // Starts at 0.1, increases gradually
       
       velocity += acceleration;
       position += velocity;
