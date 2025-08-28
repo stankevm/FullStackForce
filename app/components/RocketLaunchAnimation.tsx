@@ -43,6 +43,8 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
   
   const animationRef = useRef<number | null>(null);
   const rocketRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const mainNozzleRef = useRef<HTMLDivElement | null>(null);
   const particleIdRef = useRef(0);
   const smokePlumeId = useRef(0);
 
@@ -210,21 +212,41 @@ business.launch = function() {
       if (currentTime - lastPlumeTime > 40 && plumeCreationCount < maxPlumes) { // 40ms interval
         const id = smokePlumeId.current++;
         const side = (Math.random() > 0.5) ? 1 : -1;
-        const style = {
-            position: 'absolute',
-            bottom: `${-200 + position}px`,  
-            left: '50%',
-            width: `${100 + Math.random() * 100}px`,
-            height: `${100 + Math.random() * 100}px`,
-            background: 'radial-gradient(circle,rgba(124, 58, 237, 0.14) 0%, rgba(187, 155, 227, 0.13) 70%)',
-            borderRadius: '50%',
-            filter: 'blur(20px)',
-            transform: `translateX(-50%)`,
-            animation: `smoke-fall-${side === 1 ? 'right' : 'left'} ${3 + Math.random() * 1}s ease-out forwards`,
-            zIndex: 19
+        const containerRect = containerRef.current?.getBoundingClientRect();
+        const rocketRect = rocketRef.current?.getBoundingClientRect();
+        const nozzleRect = mainNozzleRef.current?.getBoundingClientRect();
+
+        let nozzleX = 0;
+        let nozzleY = 0;
+        if (containerRect) {
+          if (nozzleRect) {
+            nozzleX = nozzleRect.left + nozzleRect.width / 2 - containerRect.left;
+            nozzleY = nozzleRect.bottom - containerRect.top;
+          } else if (rocketRect) {
+            nozzleX = rocketRect.left + rocketRect.width / 2 - containerRect.left;
+            nozzleY = rocketRect.bottom - containerRect.top;
+          }
+        }
+
+        const wrapperStyle = {
+          position: 'absolute' as const,
+          left: `${nozzleX}px`,
+          top: `${nozzleY}px`,
+          transform: `rotate(${trajectoryAngle}deg)`,
+          transformOrigin: 'top center',
+          zIndex: 19
         };
 
-        setSmokePlumes((prev: any[]) => [...prev, { id, style }]);
+        const childStyle = {
+          width: `${100 + Math.random() * 100}px`,
+          height: `${100 + Math.random() * 100}px`,
+          background: 'radial-gradient(circle,rgba(124, 58, 237, 0.14) 0%, rgba(187, 155, 227, 0.13) 70%)',
+          borderRadius: '50%',
+          filter: 'blur(20px)',
+          animation: `smoke-drift-${side === 1 ? 'right' : 'left'} ${3 + Math.random() * 1}s ease-out forwards`
+        } as React.CSSProperties;
+
+        setSmokePlumes((prev: any[]) => [...prev, { id, wrapperStyle, childStyle }]);
 
         setTimeout(() => {
             setSmokePlumes((prev: any[]) => prev.filter(p => p.id !== id));
@@ -268,6 +290,7 @@ business.launch = function() {
 
   return (
     <div 
+      ref={containerRef}
       style={{ 
         width, 
         height, 
@@ -279,35 +302,9 @@ business.launch = function() {
     >
       {/* Code */}
               <div
-          className="codeContainer"
-          style={{
-            position: 'absolute',
-            bottom: '9%', 
-            left: '21%',
-            transform: 'translateX(0%)',
-            width: '60%',
-            height: '800px',
-            background: 'transparent',
-            padding: '20px',
-            boxSizing: 'border-box',
-            overflow: 'hidden', 
-            zIndex: 10,
-            pointerEvents: 'none',
-            textAlign: 'left',
-            perspective: '550px', // delete to remove 3D effect like in starwars
-          }}
+          className="codeContainer star-wars-code"
         >
-        <div style={{
-          color: '#FFFFFFBA',
-          fontSize: '25px',
-          lineHeight: '1.5',
-          whiteSpace: 'pre-wrap',
-          height: '100%',
-          overflow: 'hidden',
-          position: 'relative',
-          transform: 'rotateX(55deg)', // delete to remove 3D effect like in starwars
-          transformOrigin: 'bottom center' // delete to remove 3D effect like in starwars
-        }}>
+        <div className="star-wars-code-text">
           <div style={{
             position: 'absolute',
             bottom: 0,
@@ -422,7 +419,7 @@ business.launch = function() {
         }} />
         
         {/* Engine Nozzles */}
-        <div style={{
+        <div ref={mainNozzleRef} style={{
           position: 'absolute',
           bottom: '15px',
           left: '50%',
@@ -496,7 +493,11 @@ business.launch = function() {
         )}
       </div>
       
-      {smokePlumes.map(plume => <div key={plume.id} style={plume.style} />)}
+      {smokePlumes.map(plume => (
+        <div key={plume.id} style={plume.wrapperStyle}>
+          <div style={plume.childStyle} />
+        </div>
+      ))}
 
       <style jsx>{`
         @keyframes blink {
@@ -522,25 +523,64 @@ business.launch = function() {
           }
         }
         
-        @keyframes smoke-fall-left {
-          from {
-            transform: translateX(-50%) scale(0.1);
-            opacity: 1;
-          }
-          to {
-            transform: translateX(-300%) scale(3.5) translateY(300px);
-            opacity: 0;
-          }
+        @keyframes smoke-drift-left {
+          from { transform: translate(-50%, 0) scale(0.2); opacity: 1; }
+          to { transform: translate(-200%, 250px) scale(3.2); opacity: 0; }
         }
-        @keyframes smoke-fall-right {
-          from {
-            transform: translateX(-50%) scale(0.1);
-            opacity: 1;
-          }
-          to {
-            transform: translateX(150%) scale(3.5) translateY(300px);
-            opacity: 0;
-          }
+        @keyframes smoke-drift-right {
+          from { transform: translate(-50%, 0) scale(0.2); opacity: 1; }
+          to { transform: translate(80%, 250px) scale(3.2); opacity: 0; }
+        }
+
+        .star-wars-code {
+            position: absolute;
+            bottom: 9%;
+            left: 21%;
+            transform: translateX(0%);
+            width: 60%;
+            height: 800px;
+            background: transparent;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: hidden;
+            z-index: 10;
+            pointer-events: none;
+            text-align: left;
+            perspective: 550px;
+        }
+
+        .star-wars-code-text {
+            color: #FFFFFFBA;
+            font-size: 25px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+            transform: rotateX(55deg);
+            transform-origin: bottom center;
+        }
+
+        @media (max-width: 768px) {
+            .star-wars-code {
+                bottom: 12%;
+                left: 5%;
+                width: 90%;
+                height: 70vh;
+            }
+            .star-wars-code-text {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .star-wars-code {
+                bottom: 33%;
+                left: 8%;
+            }
+            .star-wars-code-text {
+                font-size: 11px;
+            }
         }
 
         /* Fade effect for the upper part of the code block */
