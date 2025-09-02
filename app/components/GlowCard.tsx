@@ -37,7 +37,7 @@ const GlowCard: React.FC<GlowCardProps> = ({ card, index, children }) => {
     <div
       ref={cardRef}
       onMouseMove={handleMouseMove}
-      className="card rounded-xl p-8 min-h-[200px] backdrop-blur-lg"
+      className="card rounded-xl p-8 min-h-[100px] backdrop-blur-lg"
       style={{
         "--mouse-x": "50%",
         "--mouse-y": "50%",

@@ -279,11 +279,21 @@ export default function Home() {
                 />
               ))}
             </div>
-            {/*balls */}
-            <LogoCarousel logos={techLogos} />
+            {/* Logos: carousel on desktop, grid with labels on mobile */}
+            <div className="logo-carousel-desktop">
+              <LogoCarousel logos={techLogos} />
+            </div>
+            <div className="logo-grid-mobile">
+              {techLogos.map((logo, idx) => (
+                <div key={idx} className="logo-grid-item">
+                  <img src={logo.src} alt={logo.alt} />
+                  <span className="logo-grid-label">{logo.alt}</span>
+                </div>
+              ))}
+            </div>
 
             <h2 id="projects" style={{marginTop: '7rem'}}>Projects</h2>
-            <div className="services-grid">
+            <div className="services-grid projects-grid">
               {projects.map((project, index) => (
                 <GlowCard key={index} card={project} index={index} />
               ))}
@@ -318,12 +328,12 @@ export default function Home() {
         <section id="contact" className="section section3">
           <div className="section-content">
             <h2 id="team" style={{ marginBottom: '4rem' }}>Meet our team</h2>
-            <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '2rem', marginBottom: '2.5rem'}}>
+            <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '1.5rem', marginBottom: '2.5rem'}}>
                           {[
-              { name: 'Vigen Sh.', role: 'CTO – Strategy & Architecture', imageSrc: 'https://via.placeholder.com/128x128/e2e8f0/64748b?text=V.S.' },
-              { name: 'Gera B.', role: 'CEO & R&D Lead', imageSrc: 'https://via.placeholder.com/128x128/e2e8f0/64748b?text=G.B.' },
-              { name: 'Stas A.', role: 'Frontend Developer', imageSrc: 'https://via.placeholder.com/128x128/e2e8f0/64748b?text=S.A.' },
-              { name: 'Stas B.', role: 'Backend Developer', imageSrc: 'https://via.placeholder.com/128x128/e2e8f0/64748b?text=S.B.' },
+              { name: 'Vigen Sh.', role: 'CTO – Strategy & Architecture', imageSrc: '/person_on_toi.png' },
+              { name: 'Gera B.', role: 'CEO & R&D Lead', imageSrc: '/person_on_toi.png' },
+              { name: 'Stas A.', role: 'Frontend Developer', imageSrc: '/person_on_toi.png' },
+              { name: 'Stas B.', role: 'Backend Developer', imageSrc: '/person_on_toi.png' },
             ].map((member, idx) => (
                 <TeamCard
                   key={idx}
@@ -334,7 +344,33 @@ export default function Home() {
               ))}
             </div>
             <h2>Contact</h2>
-            <p>Ready to build something extraordinary?</p>
+            <div className="contact-card">
+              <div className="contact-card-header">
+                <span className="contact-subtitle">Ready to build something extraordinary?</span>
+              </div>
+              <form className="contact-form" onSubmit={(e) => {
+                e.preventDefault();
+                const form = e.currentTarget as HTMLFormElement;
+                const formData = new FormData(form);
+                const name = String(formData.get('name') || '');
+                const email = String(formData.get('email') || '');
+                const message = String(formData.get('message') || '');
+                const subject = encodeURIComponent(`Message from ${name}`);
+                const body = encodeURIComponent(`${message}\n\nFrom: ${name} <${email}>`);
+                window.location.href = `mailto:team@fullstackforce.dev?subject=${subject}&body=${body}`;
+              }}>
+                <label className="contact-label">Your Name
+                  <input required name="name" className="contact-input" placeholder="What's your name?" />
+                </label>
+                <label className="contact-label">Your Email
+                  <input required name="email" type="email" className="contact-input" placeholder="What's your email?" />
+                </label>
+                <label className="contact-label">Your Message
+                  <textarea required name="message" rows={5} className="contact-textarea" placeholder="What do you want to say?" />
+                </label>
+                <button type="submit" className="contact-submit">Send</button>
+              </form>
+            </div>
             <p>Email: <a href="mailto:team@fullstackforce.dev">team@fullstackforce.dev</a></p>
           </div>
         </section>
