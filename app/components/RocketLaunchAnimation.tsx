@@ -34,6 +34,10 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
   const [smokePlumes, setSmokePlumes] = useState<any[]>([]);
   const [typingPhase, setTypingPhase] = useState(1); // 1 = first part, 2 = second part
   const [showSecondPart, setShowSecondPart] = useState(false);
+  // responsive rocket base transform and start position
+  const [rocketBaseScale, setRocketBaseScale] = useState(0.7);
+  const [rocketStartBottomPct, setRocketStartBottomPct] = useState(-11.5);
+  const [rocketStartRightPct, setRocketStartRightPct] = useState(5);
 
   // horizontal factor for diagonal trajectory (x shift per unit vertical)
   const HORIZONTAL_FACTOR = 0.4;
@@ -102,6 +106,29 @@ business.launch = function() {
 
     return () => clearTimeout(timer);
   }, [currentIndex, isTyping, launchInitiated, autoStart, typingPhase]);
+
+  // Update rocket base scale and starting position based on viewport width
+  useEffect(() => {
+    const applyResponsiveRocket = () => {
+      const width = window.innerWidth;
+      if (width <= 480) {
+        setRocketBaseScale(0.5);
+        setRocketStartBottomPct(-6);
+        setRocketStartRightPct(4);
+      } else if (width <= 768) {
+        setRocketBaseScale(0.6);
+        setRocketStartBottomPct(-9);
+        setRocketStartRightPct(4);
+      } else {
+        setRocketBaseScale(0.7);
+        setRocketStartBottomPct(-11.5);
+        setRocketStartRightPct(5);
+      }
+    };
+    applyResponsiveRocket();
+    window.addEventListener('resize', applyResponsiveRocket);
+    return () => window.removeEventListener('resize', applyResponsiveRocket);
+  }, []);
 
   const getTypingDelay = () => {
     const currentText = typingPhase === 1 ? dynamicCodePart1 : dynamicCodePart2;
@@ -324,9 +351,9 @@ business.launch = function() {
         ref={rocketRef}
         style={{
           position: 'absolute',
-          bottom: '-11.5%',
-          right: '5%',
-          transform: `translateX(-50%) translateX(${rocketXPosition}px) translateY(-${rocketPosition}px) rotate(${trajectoryAngle}deg) scale(0.7)`,
+          bottom: `${rocketStartBottomPct}%`,
+          right: `${rocketStartRightPct}%`,
+          transform: `translateX(-50%) translateX(${rocketXPosition}px) translateY(-${rocketPosition}px) rotate(${trajectoryAngle}deg) scale(${rocketBaseScale})`,
           transformOrigin: 'bottom center',
           width: '60px',
           height: '250px',
@@ -575,7 +602,7 @@ business.launch = function() {
 
         @media (max-width: 480px) {
             .star-wars-code {
-                bottom: 33%;
+                bottom: 25%;
                 left: 8%;
             }
             .star-wars-code-text {

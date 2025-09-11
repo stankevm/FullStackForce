@@ -45,12 +45,12 @@ body {
 /* --- Responsive Hero Section --- */
 @media (max-width: 768px) {
     .hero {
-        min-height: 90vh;
+        min-height: 100vh;
     }
 }
 @media (max-width: 480px) {
     .hero {
-        min-height: 80vh;
+        min-height: 100vh;
     }
 }
 
@@ -415,9 +415,15 @@ body {
 
 @media (max-width: 768px) {
   .mission-container {
+    position: static;
+    left: auto;
+    transform: none;
     flex-direction: column;
     gap: 2rem;
-    top: 3%;
+    top: auto;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
   }
   
   .mission-statement-text {
@@ -433,11 +439,19 @@ body {
   .mission-statement-text p {
     font-size: 20px;
   }
+
+  .mission-image {
+    scale: 0.95;
+  }
 }
 
 @media (max-width: 480px) {
   .mission-container {
-    top: 0.5rem;
+    position: static;
+    left: auto;
+    transform: none;
+    top: auto;
+    margin: 0 auto 1.5rem;
   }
   .mission-title {
     font-size: 32px;
@@ -608,6 +622,7 @@ body {
   align-items: center;
   position: relative;
   z-index: 10;
+  transform-origin: top center;
 } 
 
 .flow-row {
@@ -657,19 +672,27 @@ body {
 }
 
 @media (max-width: 768px) {
-  .section2 .section-content h2:first-of-type { font-size: 40px; }
+  .section2 .section-content h2:first-of-type { font-size: 40px; margin-top: 2rem; }
 
 }
 
 @media (max-width: 640px) {
-  .section2 .section-content h2:first-of-type { font-size: 34px; }
+  .section2 .section-content h2:first-of-type { font-size: 34px; margin-top: 2rem; }
 
 }
 
 @media (max-width: 480px) {
-  .section2 .section-content h2:first-of-type { font-size: 32px; margin-top: 45rem;}
+  .section2 .section-content h2:first-of-type { font-size: 32px; margin-top: 3rem;}
 
 }
+
+/* Gradual scale down of Delivery Flow on smaller screens */
+@media (max-width: 1280px) { .delivery-flow { transform: scale(0.9); } }
+@media (max-width: 1024px) { .delivery-flow { transform: scale(0.82); } }
+@media (max-width: 940px)  { .delivery-flow { transform: scale(0.70); } }
+@media (max-width: 805px)  { .delivery-flow { transform: scale(0.66); } }
+@media (max-width: 768px)  { .delivery-flow { transform: scale(0.6); } }
+
 
 @media (max-width: 1024px) {
   .section-content h2 { font-size: 44px; }
