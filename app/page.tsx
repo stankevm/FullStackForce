@@ -267,6 +267,15 @@ export default function Home() {
                 <div className="flow-item">Support & Scale</div>
               </div>
             </div>
+            <div className="delivery-list">
+              <div className="delivery-list-item">1. Ideation</div>
+              <div className="delivery-list-item">2. Advisory & Planning</div>
+              <div className="delivery-list-item">3. Design & Architecture</div>
+              <div className="delivery-list-item">4. Development</div>
+              <div className="delivery-list-item">5. Testing & QA</div>
+              <div className="delivery-list-item">6. Deployment</div>
+              <div className="delivery-list-item">7. Support & Scale</div>
+            </div>
 
             <h2 id="services">Our Services</h2>
             <div className="services-grid">
@@ -299,7 +308,7 @@ export default function Home() {
               ))}
             </div>
 
-            <h2 style={{marginTop: '7rem'}}>Why work with us?</h2>
+            <h2 id="why-work-with-us" style={{marginTop: '7rem'}}>Why work with us?</h2>
             <div
               ref={whyWorkRef}
               className={`why-work-statement ${whyWorkIsVisible ? 'visible' : ''}`}
