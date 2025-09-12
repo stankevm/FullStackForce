@@ -173,8 +173,8 @@ body {
 
 /* --- Contact Card --- */
 .contact-card {
-  margin: 2rem auto 0;
-  background: #13151b;
+  margin: 2rem auto 2rem;
+  background: #14161d;
   border-radius: 1.25rem;
   padding: 1.5rem;
   box-shadow: 0 6px 18px rgba(0,0,0,0.25);
@@ -701,7 +701,7 @@ body {
   .delivery-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 2rem;
     margin: 2rem auto;
     max-width: 220px;
     text-align: center;
@@ -716,11 +716,23 @@ body {
     font-family: 'Poppins', sans-serif;
     transition: all 0.3s ease;
     cursor: default;
+    position: relative;
   }
   .delivery-list-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(95, 33, 159, 0.3);
     background: #442e69;
+  }
+
+  .delivery-list-item:not(:last-child)::after {
+    content: '↓';
+    position: absolute;
+    left: 50%;
+    bottom: -1.65rem;
+    transform: translateX(-50%);
+    color: #222831;
+    font-size: 1.3rem;
+    font-weight: bolder;
   }
 }
 
@@ -1034,7 +1046,7 @@ body {
 }
 
 @media (max-width: 480px) {
-  .why-work-statement { font-size: 8px; margin-bottom: 5rem;}
+  .why-work-statement { font-size: 8px; margin-bottom: 3rem; margin-top: 2rem;}
   .why-work-statement p { font-size: 17px; }
 }
 

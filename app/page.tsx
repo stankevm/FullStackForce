@@ -268,13 +268,13 @@ export default function Home() {
               </div>
             </div>
             <div className="delivery-list">
-              <div className="delivery-list-item">1. Ideation</div>
-              <div className="delivery-list-item">2. Advisory & Planning</div>
-              <div className="delivery-list-item">3. Design & Architecture</div>
-              <div className="delivery-list-item">4. Development</div>
-              <div className="delivery-list-item">5. Testing & QA</div>
-              <div className="delivery-list-item">6. Deployment</div>
-              <div className="delivery-list-item">7. Support & Scale</div>
+              <div className="delivery-list-item">Ideation</div>
+              <div className="delivery-list-item">Advisory & Planning</div>
+              <div className="delivery-list-item">Design & Architecture</div>
+              <div className="delivery-list-item">Development</div>
+              <div className="delivery-list-item">Testing & QA</div>
+              <div className="delivery-list-item">Deployment</div>
+              <div className="delivery-list-item">Support & Scale</div>
             </div>
 
             <h2 id="services">Our Services</h2>
