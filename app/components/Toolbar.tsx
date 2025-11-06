@@ -26,7 +26,7 @@ const Toolbar: React.FC = () => {
   };
 
   return (
-    <nav className={`toolbar ${showLogo ? "show-logo" : ""}`}> 
+    <nav className={`toolbar ${showLogo ? "show-logo" : ""} ${isMenuOpen ? "menu-open" : ""}`}> 
       <div
         className="logo"
         style={{ opacity: showLogo ? 1 : 0, transition: "opacity 0.5s ease" }}

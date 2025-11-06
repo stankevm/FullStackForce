@@ -371,6 +371,7 @@ body {
   font-weight: 700;
   letter-spacing: -1px;
   margin-bottom: 4.5rem;
+  margin-top: 0rem;
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.8s ease-out, transform 0.6s ease-out;
@@ -558,7 +559,7 @@ body {
 
 @media (max-width: 480px) {
   .hero-header {
-    top: 25%;
+    top: 21%;
   }
 
   .hero-header h1 {
@@ -567,6 +568,11 @@ body {
 
   .hero-typewriter {
     margin-top: 1.5rem;
+    font-size: 1.1rem;
+  }
+
+  .hero-typewriter .typewriter-prefix {
+    font-size: 1rem; 
   }
 }
 
@@ -1297,6 +1303,12 @@ body {
   background: rgba(12, 14, 18, 0.989); /*darker background after scroll */
 }
 
+.toolbar.menu-open {
+  background: rgba(12, 14, 18, 0.95) !important;
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(124, 58, 237, 0.15);
+}
+
 .toolbar-links {
   position: absolute;
   top: 50%;
@@ -1453,12 +1465,23 @@ body {
   position: absolute;
   height: 3px;
   width: 100%;
-  background: #fff;
+  background: linear-gradient(90deg, #fff, #e2cbff);
   border-radius: 9px;
   opacity: 1;
   left: 0;
   transform: rotate(0deg);
   transition: .25s ease-in-out;
+}
+
+@keyframes menuSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scaleY(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
 }
 
 .hamburger-icon span:nth-child(1) {
@@ -1489,37 +1512,55 @@ body {
 }
 
 .mobile-menu {
-  position: absolute;
-  top: 55px; 
+  position: fixed;
+  top: 0;
   left: 0;
   right: 0;
-  background: #1c2028;
-  backdrop-filter: blur(10px);
-  padding: 1rem 0;
+  bottom: 0;
+  height: 100vh;
+  background: rgba(12, 14, 18, 0.98);
+  backdrop-filter: blur(12px);
+  padding: 0;
   z-index: 999;
-  border-bottom-left-radius: 1rem;
-  border-bottom-right-radius: 1rem;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: menuSlide 0.3s ease-out forwards;
 }
 
 .mobile-menu ul {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 2rem 1rem;
   text-align: center;
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
 }
 
 .mobile-menu ul li a {
   display: block;
-  padding: 1rem 0;
+  padding: 1.2rem 2rem;
+  margin: 0 1.5rem;
   color: #fff;
   text-decoration: none;
-  font-size: 1rem;
-  transition: background 0.3s ease;
+  font-size: 1.3rem;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  border-radius: 0.8rem;
+  background: rgba(124, 58, 237, 0.15);
+  border: 1px solid rgba(124, 58, 237, 0.1);
 }
 
 .mobile-menu ul li a:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(124, 58, 237, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 
+    0 4px 12px rgba(124, 58, 237, 0.2),
+    0 2px 4px rgba(124, 58, 237, 0.1);
+  border: 1px solid rgba(124, 58, 237, 0.2);
 }
 
 @media (max-width: 768px) {

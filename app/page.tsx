@@ -288,7 +288,7 @@ export default function Home() {
                 />
               ))}
             </div>
-            {/* Logos: carousel on desktop, grid with labels on mobile */}
+            {/* Logos*/}
             <div className="logo-carousel-desktop">
               <LogoCarousel logos={techLogos} />
             </div>

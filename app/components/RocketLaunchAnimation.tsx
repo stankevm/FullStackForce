@@ -9,6 +9,13 @@ interface Particle {
   opacity: number;
 }
 
+type MotionParams = {
+  initialVelocity: number;
+  baseAcceleration: number;
+  accelerationGrowthRate: number;
+  timeStep: number;
+};
+
 interface RocketLaunchAnimationProps {
   autoStart?: boolean;
   onLaunchComplete?: () => void;
@@ -38,11 +45,18 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
   const [rocketBaseScale, setRocketBaseScale] = useState(0.7);
   const [rocketStartBottomPct, setRocketStartBottomPct] = useState(-11.5);
   const [rocketStartRightPct, setRocketStartRightPct] = useState(5);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [motionParams, setMotionParams] = useState<MotionParams>({
+    initialVelocity: 0.2,
+    baseAcceleration: 0.2,
+    accelerationGrowthRate: 0.02,
+    timeStep: 0.016,
+  });
 
-  // horizontal factor for diagonal trajectory (x shift per unit vertical)
-  const HORIZONTAL_FACTOR = 0.4;
-  // pre-computed angle so rocket tilts to match trajectory
-  const trajectoryAngle = -Math.atan(HORIZONTAL_FACTOR) * 180 / Math.PI;
+  // horizontal factor for trajectory; 0 on small screens for straight-up flight
+  const horizontalFactor = isSmallScreen ? 0 : 0.4;
+  // angle so rocket tilts to match trajectory; 0 on small screens
+  const trajectoryAngle = isSmallScreen ? 0 : -Math.atan(horizontalFactor) * 180 / Math.PI;
 
   
   const animationRef = useRef<number | null>(null);
@@ -111,18 +125,37 @@ business.launch = function() {
   useEffect(() => {
     const applyResponsiveRocket = () => {
       const width = window.innerWidth;
+      setIsSmallScreen(width <= 480);
       if (width <= 480) {
-        setRocketBaseScale(0.5);
+        setRocketBaseScale(0.4);
         setRocketStartBottomPct(-6);
         setRocketStartRightPct(4);
+        setMotionParams({
+          initialVelocity: 0.02,
+          baseAcceleration: 0.06,
+          accelerationGrowthRate: 0.012,
+          timeStep: 0.001,
+        });
       } else if (width <= 768) {
         setRocketBaseScale(0.6);
         setRocketStartBottomPct(-9);
         setRocketStartRightPct(4);
+        setMotionParams({
+          initialVelocity: 0.18,
+          baseAcceleration: 0.18,
+          accelerationGrowthRate: 0.018,
+          timeStep: 0.016,
+        });
       } else {
         setRocketBaseScale(0.7);
         setRocketStartBottomPct(-11.5);
         setRocketStartRightPct(5);
+        setMotionParams({
+          initialVelocity: 0.2,
+          baseAcceleration: 0.8,
+          accelerationGrowthRate: 0.05,
+          timeStep: 0.016,
+        });
       }
     };
     applyResponsiveRocket();
@@ -215,28 +248,31 @@ business.launch = function() {
 
   const animateRocket = () => {
     let position = 0;
-    let velocity = 0.2;
+    let velocity = motionParams.initialVelocity;
     let time = 0;
     let plumeCreationCount = 0;
-    const maxPlumes = 50;
+    const maxPlumes = window.innerWidth > 768 ? 30 : 50;
     let lastPlumeTime = 0;
 
     const animate = () => {
-      time += 0.016; // Approximate frame time at 60fps
+      time += motionParams.timeStep; // Approximate frame time at 60fps
       
       // Gradual acceleration that starts slow and increases over time
-      const acceleration = 0.2 + (time * 0.02); // Starts at 0.1, increases gradually
+      const acceleration = motionParams.baseAcceleration + (time * motionParams.accelerationGrowthRate); // Starts smaller, increases gradually
       
       velocity += acceleration;
       position += velocity;
-      setRocketPosition(position);
 
       // Update horizontal position to create diagonal flight path
-      const xPos = -position * HORIZONTAL_FACTOR;
-      setRocketXPosition(xPos);
+      const xPos = -position * horizontalFactor;
+
+      // Directly update DOM instead of React state for better performance
+      if (rocketRef.current) {
+        rocketRef.current.style.transform = `translateX(-50%) translateX(${xPos}px) translateY(-${position}px) rotate(${trajectoryAngle}deg) scale(${rocketBaseScale})`;
+      }
 
       const currentTime = performance.now();
-      if (currentTime - lastPlumeTime > 40 && plumeCreationCount < maxPlumes) { // 40ms interval
+      if (currentTime - lastPlumeTime > 40 && plumeCreationCount < maxPlumes) { // 80ms interval (less frequent)
         const id = smokePlumeId.current++;
         const side = (Math.random() > 0.5) ? 1 : -1;
         const containerRect = containerRef.current?.getBoundingClientRect();
@@ -265,11 +301,13 @@ business.launch = function() {
         };
 
         const childStyle = {
-          width: `${100 + Math.random() * 100}px`,
-          height: `${100 + Math.random() * 100}px`,
-          background: 'radial-gradient(circle,rgba(124, 58, 237, 0.14) 0%, rgba(187, 155, 227, 0.13) 70%)',
+          width: `${(isSmallScreen ? 40 : 100) + Math.random() * (isSmallScreen ? 40 : 100)}px`,
+          height: `${(isSmallScreen ? 40 : 100) + Math.random() * (isSmallScreen ? 40 : 100)}px`,
+          background: isSmallScreen
+            ? 'radial-gradient(circle, rgba(124, 58, 237, 0.43) 0%, rgba(187, 155, 227, 0.31) 70%)'
+            : 'radial-gradient(circle, rgba(124, 58, 237, 0.14) 0%, rgba(187, 155, 227, 0.13) 70%)',
           borderRadius: '50%',
-          filter: 'blur(20px)',
+          filter: isSmallScreen ? 'blur(12px)' : 'blur(20px)',
           animation: `smoke-drift-${side === 1 ? 'right' : 'left'} ${3 + Math.random() * 1}s ease-out forwards`
         } as React.CSSProperties;
 
@@ -352,12 +390,13 @@ business.launch = function() {
         style={{
           position: 'absolute',
           bottom: `${rocketStartBottomPct}%`,
-          right: `${rocketStartRightPct}%`,
-          transform: `translateX(-50%) translateX(${rocketXPosition}px) translateY(-${rocketPosition}px) rotate(${trajectoryAngle}deg) scale(${rocketBaseScale})`,
+          left: isSmallScreen ? '50%' : undefined,
+          right: isSmallScreen ? undefined : `${rocketStartRightPct}%`,
+          transform: `translateX(-50%) translateX(0px) translateY(0px) rotate(${trajectoryAngle}deg) scale(${rocketBaseScale})`,
           transformOrigin: 'bottom center',
           width: '60px',
           height: '250px',
-          transition: 'transform 0.1s ease',
+          willChange: 'transform',
           zIndex: 20
         }}
       >
@@ -590,8 +629,8 @@ business.launch = function() {
 
         @media (max-width: 768px) {
             .star-wars-code {
-                bottom: 12%;
-                left: 5%;
+                bottom: 20%;
+                left: 10%;
                 width: 90%;
                 height: 70vh;
             }
@@ -617,6 +656,7 @@ business.launch = function() {
         }
         /* vignette pseudo-elements removed as per user's request */
       `}</style>
+      
     </div>
   );
 };
