@@ -47,20 +47,21 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
   const [rocketStartRightPct, setRocketStartRightPct] = useState(5);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [motionParams, setMotionParams] = useState<MotionParams>({
-    initialVelocity: 0.2,
-    baseAcceleration: 0.2,
-    accelerationGrowthRate: 0.02,
+    initialVelocity: 0.05,
+    baseAcceleration: 0.1,
+    accelerationGrowthRate: 0.008,
     timeStep: 0.016,
   });
 
   // horizontal factor for trajectory; 0 on small screens for straight-up flight
-  const horizontalFactor = isSmallScreen ? 0 : 0.4;
+  const horizontalFactor = isSmallScreen ? 0 : 0.18;
   // angle so rocket tilts to match trajectory; 0 on small screens
-  const trajectoryAngle = isSmallScreen ? 0 : -Math.atan(horizontalFactor) * 180 / Math.PI;
+  const trajectoryAngle = 0;
 
   
   const animationRef = useRef<number | null>(null);
   const rocketRef = useRef<HTMLDivElement | null>(null);
+  const rocketInnerRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mainNozzleRef = useRef<HTMLDivElement | null>(null);
   const particleIdRef = useRef(0);
@@ -141,9 +142,9 @@ business.launch = function() {
         setRocketStartBottomPct(-9);
         setRocketStartRightPct(4);
         setMotionParams({
-          initialVelocity: 0.18,
-          baseAcceleration: 0.18,
-          accelerationGrowthRate: 0.018,
+          initialVelocity: 0.05,
+          baseAcceleration: 0.12,
+          accelerationGrowthRate: 0.008,
           timeStep: 0.016,
         });
       } else {
@@ -151,9 +152,9 @@ business.launch = function() {
         setRocketStartBottomPct(-11.5);
         setRocketStartRightPct(5);
         setMotionParams({
-          initialVelocity: 0.2,
-          baseAcceleration: 0.8,
-          accelerationGrowthRate: 0.05,
+          initialVelocity: 0.05,
+          baseAcceleration: 0.18,
+          accelerationGrowthRate: 0.01,
           timeStep: 0.016,
         });
       }
@@ -253,6 +254,7 @@ business.launch = function() {
     let plumeCreationCount = 0;
     const maxPlumes = window.innerWidth > 768 ? 30 : 50;
     let lastPlumeTime = 0;
+    let previousXPos = 0;
 
     const animate = () => {
       time += motionParams.timeStep; // Approximate frame time at 60fps
@@ -263,15 +265,61 @@ business.launch = function() {
       velocity += acceleration;
       position += velocity;
 
-      // Update horizontal position to create diagonal flight path
-      const xPos = -position * horizontalFactor;
+      // Calculate turn progress
+      const rotationStart = isSmallScreen ? 0 : 320;
+      const rotationRamp = isSmallScreen ? 400 : 650;
+      const turnEnd = rotationStart + rotationRamp;
+      
+      // Phase 1: Before turn (vertical flight)
+      // Phase 2: During turn (accelerating horizontally with smoothstep)  
+      // Phase 3: After turn (constant horizontal velocity)
+      
+      let xPos = 0;
+      if (position <= rotationStart) {
+        xPos = 0; // No horizontal movement yet
+      } else if (position <= turnEnd) {
+        const rawTilt = (position - rotationStart) / rotationRamp;
+        const smoothTurn = rawTilt * rawTilt * (3 - 2 * rawTilt);
+        xPos = -position * horizontalFactor * smoothTurn;
+      } else {
+        // After turn: constant horizontal velocity
+        const turnEndXPos = -turnEnd * horizontalFactor * 1; // smoothTurn(1) = 1
+        const distanceAfterTurn = position - turnEnd;
+        xPos = turnEndXPos - distanceAfterTurn * horizontalFactor;
+      }
+      
+      // Same for future position
+      const futurePosition = position + 30;
+      let futureXPos = 0;
+      if (futurePosition <= rotationStart) {
+        futureXPos = 0;
+      } else if (futurePosition <= turnEnd) {
+        const rawFutureTilt = (futurePosition - rotationStart) / rotationRamp;
+        const futureSmoothTurn = rawFutureTilt * rawFutureTilt * (3 - 2 * rawFutureTilt);
+        futureXPos = -futurePosition * horizontalFactor * futureSmoothTurn;
+      } else {
+        const turnEndXPos = -turnEnd * horizontalFactor * 1;
+        const distanceAfterTurn = futurePosition - turnEnd;
+        futureXPos = turnEndXPos - distanceAfterTurn * horizontalFactor;
+      }
+      
+      const deltaX = futureXPos - xPos;
+      const deltaY = -30; // lookAhead distance
+      const dynamicAngle = isSmallScreen ? 0 : Math.atan2(deltaX, -deltaY) * 180 / Math.PI;
+      
+      previousXPos = xPos;
 
       // Directly update DOM instead of React state for better performance
+      // Separate positioning from rotation for natural movement
       if (rocketRef.current) {
-        rocketRef.current.style.transform = `translateX(-50%) translateX(${xPos}px) translateY(-${position}px) rotate(${trajectoryAngle}deg) scale(${rocketBaseScale})`;
+        rocketRef.current.style.transform = `translateX(-50%) translateX(${xPos}px) translateY(-${position}px)`;
+      }
+      if (rocketInnerRef.current) {
+        rocketInnerRef.current.style.transform = `rotate(${dynamicAngle}deg) scale(${rocketBaseScale})`;
       }
 
       const currentTime = performance.now();
+      
       if (currentTime - lastPlumeTime > 40 && plumeCreationCount < maxPlumes) { // 80ms interval (less frequent)
         const id = smokePlumeId.current++;
         const side = (Math.random() > 0.5) ? 1 : -1;
@@ -295,9 +343,9 @@ business.launch = function() {
           position: 'absolute' as const,
           left: `${nozzleX}px`,
           top: `${nozzleY}px`,
-          transform: `rotate(${trajectoryAngle}deg)`,
+          transform: `rotate(${dynamicAngle}deg)`,
           transformOrigin: 'top center',
-          zIndex: 19
+          zIndex: 145
         };
 
         const childStyle = {
@@ -362,7 +410,7 @@ business.launch = function() {
         position: 'relative',
         background: 'transparent',
         fontFamily: 'Courier New, monospace',
-        overflow: 'hidden',
+        overflow: 'visible',
       }}
     >
       {/* Code */}
@@ -392,14 +440,24 @@ business.launch = function() {
           bottom: `${rocketStartBottomPct}%`,
           left: isSmallScreen ? '50%' : undefined,
           right: isSmallScreen ? undefined : `${rocketStartRightPct}%`,
-          transform: `translateX(-50%) translateX(0px) translateY(0px) rotate(${trajectoryAngle}deg) scale(${rocketBaseScale})`,
-          transformOrigin: 'bottom center',
+          transform: `translateX(-50%) translateX(0px) translateY(0px)`,
           width: '60px',
           height: '250px',
           willChange: 'transform',
-          zIndex: 20
+          zIndex: 150
         }}
       >
+        <div
+          ref={rocketInnerRef}
+          style={{
+            position: 'relative',
+            width: '100%',
+            height: '100%',
+            transform: `rotate(0deg) scale(${rocketBaseScale})`,
+            transformOrigin: 'center center',
+            willChange: 'transform'
+          }}
+        >
         {/* Main Rocket Body */}
         <div style={{
           position: 'absolute',
@@ -557,6 +615,7 @@ business.launch = function() {
             }} />
           </>
         )}
+        </div>
       </div>
       
       {smokePlumes.map(plume => (

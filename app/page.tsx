@@ -161,8 +161,17 @@ export default function Home() {
             className="absolute inset-0 z-0"
           />
           {/* Rocket launch animation */}
-          <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 30 }}>
-            <RocketLaunchAnimation autoStart={true} showInfo={false} width="100%" height="110vh" />
+          <div style={{ 
+            position: 'absolute', 
+            top: 0, 
+            left: 0, 
+            width: '100%', 
+            height: '100%',
+            pointerEvents: 'none',
+            zIndex: 150,
+            overflow: 'hidden'
+          }}>
+            <RocketLaunchAnimation autoStart={true} showInfo={false} width="100%" height="100%" />
           </div>
           <div className="hero-header">
             <h1><img className="hero-logo" />FullStackForce</h1>
