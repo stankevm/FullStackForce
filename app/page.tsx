@@ -127,15 +127,18 @@ export default function Home() {
   const projects = [
     {
       title: "E-commerce Platform",
-      description: "A modern e-commerce solution built with Next.js and Node.js"
+      description: "A modern e-commerce solution built with Next.js and Node.js",
+      icon: "fa-solid fa-cart-shopping"
     },
     {
       title: "Healthcare Management System",
-      description: "Integrated EHR system with HL7 compatibility"
+      description: "Integrated EHR system with HL7 compatibility",
+      icon: "fa-solid fa-heart-pulse"
     },
     {
       title: "Financial Analytics Dashboard",
-      description: "Real-time data visualization platform for financial metrics"
+      description: "Real-time data visualization platform for financial metrics",
+      icon: "fa-solid fa-chart-line"
     }
   ];
 
@@ -348,10 +351,10 @@ export default function Home() {
             <h2 id="team" style={{ marginBottom: '4rem' }}>Meet our team</h2>
             <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '1.5rem', marginBottom: '2.5rem'}}>
                           {[
-              { name: 'Vigen Sh.', role: 'CTO – Strategy & Architecture', imageSrc: '/person_on_toi.png' },
-              { name: 'Gera B.', role: 'CEO & R&D Lead', imageSrc: '/person_on_toi.png' },
-              { name: 'Stas A.', role: 'Frontend Developer', imageSrc: '/person_on_toi.png' },
-              { name: 'Stas B.', role: 'Backend Developer', imageSrc: '/person_on_toi.png' },
+              { name: 'Vigen Sh.', role: 'CTO – Strategy & Architecture', imageSrc: '/cosmic-prog-cartoon.png' },
+              { name: 'Gera B.', role: 'CEO & R&D Lead', imageSrc: '/whiteboard-prog-cut.png' },
+              { name: 'Stas A.', role: 'Frontend Developer', imageSrc: '/toi-prog-cartoon2.png' },
+              { name: 'Stas B.', role: 'Backend Developer', imageSrc: '/prog-table2.png' },
             ].map((member, idx) => (
                 <TeamCard
                   key={idx}

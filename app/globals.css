@@ -384,7 +384,7 @@ body {
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.8s ease-out, transform 0.6s ease-out;
-  color: #4B5563;
+  color: #3b434e;
 }
 
 .mission-statement-text.visible .mission-title,
@@ -471,6 +471,8 @@ body {
 
   .mission-statement-text p {
     font-size: 17px;
+    color: #2b3139;
+    font-weight: 400;
   }
 }
 
@@ -992,18 +994,49 @@ body {
   font-size: 1.3rem;
   font-weight: 600;
   margin-bottom: 2rem;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   pointer-events: none;
 }
 
+.card-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  min-height: 230px;
+}
+
+.card-description-wrapper {
+  margin-top: auto;
+
+}
+
 .card p {
-  color: #4A5568;
+  color: #3b434e;
   font-weight: 500;
   line-height: 1.625;
   max-width: 90%;
   margin-left: auto;
   margin-right: auto;
   pointer-events: none;
+}
+
+.card-background-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 8rem;
+  opacity: 0.1;
+  color: #7648d1;
+  pointer-events: none;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.card:hover .card-background-icon {
+  opacity: 0.20;
+  transform: translate(-50%, -50%) scale(1.05);
 }
 
 .why-work-statement {
@@ -1027,7 +1060,7 @@ body {
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 1s ease-out, transform 0.8s ease-out;
-  color: #4B5563;
+  color: #3b434e;
 }
 
 .why-work-statement.visible p {
@@ -1053,7 +1086,7 @@ body {
 
 @media (max-width: 480px) {
   .why-work-statement { font-size: 8px; margin-bottom: 3rem; margin-top: 2rem;}
-  .why-work-statement p { font-size: 17px; }
+  .why-work-statement p { font-size: 17px; font-weight: 400; color: #2b3139;}
 }
 
 /* --- Logo Carousel --- */
@@ -1340,6 +1373,13 @@ body {
   white-space: nowrap;
   display: flex;
   align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.toolbar .logo:hover {
+  opacity: 0.8;
 }
 
 .logo-image {
@@ -1549,9 +1589,9 @@ body {
   font-size: 1.3rem;
   font-weight: 500;
   transition: all 0.25s ease;
-  border-radius: 0.8rem;
-  background: rgba(124, 58, 237, 0.15);
-  border: 1px solid rgba(124, 58, 237, 0.1);
+  border-radius: 2rem;
+  background: rgba(146, 71, 237, 0.185);
+  border: 1px solid rgba(146, 71, 237, 0.185);
 }
 
 .mobile-menu ul li a:hover {

@@ -3,6 +3,7 @@ import { useRef, MouseEvent, ReactNode } from "react";
 interface CardData {
   title: string;
   description?: string;
+  icon?: string;
 }
 
 interface GlowCardProps {
@@ -37,19 +38,26 @@ const GlowCard: React.FC<GlowCardProps> = ({ card, index, children }) => {
     <div
       ref={cardRef}
       onMouseMove={handleMouseMove}
-      className="card rounded-xl p-8 min-h-[100px] backdrop-blur-lg"
+      className="card rounded-xl p-8 min-h-[280px] backdrop-blur-lg"
       style={{
         "--mouse-x": "50%",
         "--mouse-y": "50%",
       } as React.CSSProperties}
     >
       <div className="glow" />
-      <div className="relative z-10">
+      {card.icon && (
+        <div className="card-background-icon">
+          <i className={card.icon}></i>
+        </div>
+      )}
+      <div className="relative z-10 card-content-wrapper">
         <h3>{card.title}</h3>
-        {card.description && (
-          <p>{card.description}</p>
-        )}
-        {children}
+        <div className="card-description-wrapper">
+          {card.description && (
+            <p>{card.description}</p>
+          )}
+          {children}
+        </div>
       </div>
     </div>
   );

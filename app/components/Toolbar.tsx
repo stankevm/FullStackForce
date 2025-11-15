@@ -27,13 +27,14 @@ const Toolbar: React.FC = () => {
 
   return (
     <nav className={`toolbar ${showLogo ? "show-logo" : ""} ${isMenuOpen ? "menu-open" : ""}`}> 
-      <div
+      <a
+        href="#"
         className="logo"
         style={{ opacity: showLogo ? 1 : 0, transition: "opacity 0.5s ease" }}
       >
         <img src="/logo.png" alt="FullStackForce Logo" className="logo-image" />
         FullStackForce
-      </div>
+      </a>
       <ul
         className={`toolbar-links ${showLogo ? "toolbar-links-right" : "toolbar-links-center"}`}
       >

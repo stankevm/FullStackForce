@@ -88,7 +88,7 @@ business.launch = function() {
 
   //gets typed in real time
   const dynamicCodePart1 = `function start() {\n      business.launch();\n}\n\nstart();`;
-  const dynamicCodePart2 = `\n\n////   may Fullstackforce skyrocket your growth 🚀 🚀 🚀`;
+  const dynamicCodePart2 = `\n\n////   may Fullstackforce skyrocket your growth 🚀 🚀  ⇧`;
 
   useEffect(() => {
     if (!autoStart || !isTyping) return;
