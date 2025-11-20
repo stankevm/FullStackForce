@@ -240,6 +240,58 @@ body {
 }
 
 .contact-submit:hover { background: #292a37; border-color: #9867ee92; box-shadow: 0 0 18px #8343f290; }
+
+.contact-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #1d1e29;
+  border-color: #8141ef8c;
+  box-shadow: none;
+}
+
+.contact-message {
+  grid-column: 1;
+  padding: 0.5rem 0;
+  text-align: center;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease-in;
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.contact-message.fading-out {
+  animation: fadeOut 0.5s ease-out forwards;
+}
+
+.contact-success {
+  color: #2f9153;
+}
+
+.contact-error {
+  color: #d84e4e;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
 @media (min-width: 1024px) {
   .contact-card { max-width: 600px; grid-template-columns: 1fr; }
   .contact-form { grid-template-columns: 1fr; }
@@ -678,7 +730,7 @@ body {
   display: inline-block;
 }
 
-/* --- Responsive adjustments: Delivery Flow --- */
+/*  Delivery Flow */
 @media (max-width: 1024px) {
   .section2 .section-content h2:first-of-type { font-size: 44px; }
 
@@ -774,10 +826,28 @@ body {
   z-index: 10;
 }
 
-/* Projects grid behavior: 3 columns above 480px, 1 below */
 .projects-grid { grid-template-columns: repeat(3, 1fr); }
+
+
+@media (max-width: 1024px) {
+  .projects-grid { grid-template-columns: repeat(2, 1fr); }
+  
+  /* Center the third card */
+  .projects-grid > :nth-child(3) {
+    grid-column: 1 / -1;
+    max-width: 50%;
+    margin: 0 auto;
+  }
+}
+
 @media (max-width: 480px) {
   .projects-grid { grid-template-columns: 1fr; }
+
+  .projects-grid > :nth-child(3) {
+    grid-column: auto;
+    max-width: 100%;
+    margin: 0;
+  }
 }
 
 .service-card {
@@ -870,19 +940,7 @@ body {
 }
 
 @media (max-width: 1024px) {
-  .services-grid { grid-template-columns: repeat(2, 1fr); }
-  /* Keep 3 columns for projects until 480px */
-  .projects-grid { grid-template-columns: repeat(3, 1fr); }
-}
-
-@media (max-width: 640px) {
-  .services-grid { grid-template-columns: repeat(2, 1fr); }
-  .projects-grid { grid-template-columns: repeat(3, 1fr); }
-}
-
-/* --- Responsive adjustments for service cards --- */
-@media (max-width: 1024px) {
-  .services-grid { gap: 1.75rem; }
+  .services-grid { grid-template-columns: repeat(2, 1fr); gap: 1.75rem; }
   .service-card { padding: 1.25rem; min-height: 180px; }
   .service-card h3 { font-size: 1.2rem; }
   .service-card .icon { width: 56px; height: 56px; }
@@ -895,7 +953,6 @@ body {
   .service-card h3 { font-size: 1.1rem; }
   .service-card .icon { width: 52px; height: 52px; }
   .service-card ul { font-size: 0.95rem; }
-  /* Avoid alternating slide offset in single/dual column */
   .service-card, .service-card:nth-child(even), .service-card.animate { transform: translateX(0); }
 }
 

@@ -88,7 +88,7 @@ business.launch = function() {
 
   //gets typed in real time
   const dynamicCodePart1 = `function start() {\n      business.launch();\n}\n\nstart();`;
-  const dynamicCodePart2 = `\n\n////   may Fullstackforce skyrocket your growth 🚀 🚀  ⇧`;
+  const dynamicCodePart2 = `\n\n////   may Fullstackforce skyrocket your growth ⇧  ⇧  🚀`;
 
   useEffect(() => {
     if (!autoStart || !isTyping) return;
@@ -129,7 +129,7 @@ business.launch = function() {
       setIsSmallScreen(width <= 480);
       if (width <= 480) {
         setRocketBaseScale(0.4);
-        setRocketStartBottomPct(-6);
+        setRocketStartBottomPct(-15);
         setRocketStartRightPct(4);
         setMotionParams({
           initialVelocity: 0.02,
@@ -700,7 +700,7 @@ business.launch = function() {
 
         @media (max-width: 480px) {
             .star-wars-code {
-                bottom: 25%;
+                bottom: 20%;
                 left: 8%;
             }
             .star-wars-code-text {

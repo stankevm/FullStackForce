@@ -14,12 +14,18 @@ import Particles from "./components/Particles";
 import RocketLaunchAnimation from "./components/RocketLaunchAnimation";
 import Orb from "./components/GlowingCircle";
 import LogoCarousel from "./components/LogoCarousel";
+import FlipCard from "./components/FlipCard";
 
 export default function Home() {
   const missionRef = useRef(null);
   const [missionIsVisible, setMissionIsVisible] = useState(false);
   const whyWorkRef = useRef(null);
   const [whyWorkIsVisible, setWhyWorkIsVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [submitMessage, setSubmitMessage] = useState('');
+  const [isFadingOut, setIsFadingOut] = useState(false);
+  const [flippedCardIndex, setFlippedCardIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const missionObserver = new IntersectionObserver(
@@ -57,6 +63,26 @@ export default function Home() {
       whyWorkObserver.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    if (submitStatus !== 'idle') {
+      const fadeTimer = setTimeout(() => {
+        setIsFadingOut(true);
+      }, 4500);
+
+      // remove fail/success message after 5 seconds 
+      const removeTimer = setTimeout(() => {
+        setSubmitStatus('idle');
+        setSubmitMessage('');
+        setIsFadingOut(false);
+      }, 5000);
+
+      return () => {
+        clearTimeout(fadeTimer);
+        clearTimeout(removeTimer);
+      };
+    }
+  }, [submitStatus]);
 
   const services = [
     {
@@ -139,6 +165,27 @@ export default function Home() {
       title: "Financial Analytics Dashboard",
       description: "Real-time data visualization platform for financial metrics",
       icon: "fa-solid fa-chart-line"
+    }
+  ];
+
+  const flipCardsData = [
+    {
+      title: "E-commerce Platform",
+      description: "Product Management System \n Shopping Cart & Checkout \n User Authentication & Profiles \n Order Processing Engine \n Admin Dashboard \n Search & Filtering ",
+      subtitle: "A modern e-commerce solution built with Next.js and Node.js for high performance and a smooth user experience.",
+      image: "e-com.png"
+    },
+    {
+      title: "Healthcare Management System",
+      description: "Patient Records Management \n HL7 Integration Layer \n Appointment Scheduling \n Clinical Documentation \n Prescription Management \n Billing & Insurance \n Reporting & Analytics ",
+      subtitle: "An integrated Electronic Health Record system built with HL7 standards for seamless data exchange and patient care management.",
+      image: "health2.png"
+    },
+    {
+      title: "Financial Analytics Dashboard",
+      description: "Real-time Data Pipeline \n Interactive Visualizations \n Custom Report Builder \n Budget Tracking & Forecasting \n Multi-source Data Integration \n Performance Metrics Dashboard \n Alert & Notification System \n Export & Sharing",
+      subtitle: "A real-time data visualization platform that turns complex financial metrics into actionable insights with interactive dashboards and reports.",
+      image: "finance.png"
     }
   ];
 
@@ -314,9 +361,23 @@ export default function Home() {
             </div>
 
             <h2 id="projects" style={{marginTop: '7rem'}}>Projects</h2>
-            <div className="services-grid projects-grid">
+            {/*<div className="services-grid projects-grid">
               {projects.map((project, index) => (
                 <GlowCard key={index} card={project} index={index} />
+              ))}
+            </div>*/}
+
+            <div className="services-grid projects-grid" style={{ marginTop: '2rem' }}>
+              {flipCardsData.map((card, index) => (
+                <FlipCard
+                  key={index}
+                  image={card.image}
+                  title={card.title}
+                  subtitle={card.subtitle}
+                  description={card.description}
+                  isFlipped={flippedCardIndex === index}
+                  onFlip={() => setFlippedCardIndex(flippedCardIndex === index ? null : index)}
+                />
               ))}
             </div>
 
@@ -369,16 +430,44 @@ export default function Home() {
               <div className="contact-card-header">
                 <span className="contact-subtitle">Ready to build something extraordinary?</span>
               </div>
-              <form className="contact-form" onSubmit={(e) => {
+              <form className="contact-form" onSubmit={async (e) => {
                 e.preventDefault();
+                setIsSubmitting(true);
+                setSubmitStatus('idle');
+                setSubmitMessage('');
+                setIsFadingOut(false);
+
                 const form = e.currentTarget as HTMLFormElement;
                 const formData = new FormData(form);
                 const name = String(formData.get('name') || '');
                 const email = String(formData.get('email') || '');
                 const message = String(formData.get('message') || '');
-                const subject = encodeURIComponent(`Message from ${name}`);
-                const body = encodeURIComponent(`${message}\n\nFrom: ${name} <${email}>`);
-                window.location.href = `mailto:team@fullstackforce.dev?subject=${subject}&body=${body}`;
+
+                try {
+                  const response = await fetch('/api/send-email', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name, email, message }),
+                  });
+
+                  const data = await response.json();
+
+                  if (response.ok) {
+                    setSubmitStatus('success');
+                    setSubmitMessage('Thank you! Your message has been sent successfully.');
+                    form.reset();
+                  } else {
+                    setSubmitStatus('error');
+                    setSubmitMessage(data.error || 'Something went wrong. Please try again.');
+                  }
+                } catch (error) {
+                  setSubmitStatus('error');
+                  setSubmitMessage('Failed to send message. Please check your connection.');
+                } finally {
+                  setIsSubmitting(false);
+                }
               }}>
                 <label className="contact-label">Your Name
                   <input required name="name" className="contact-input" placeholder="What's your name?" />
@@ -389,7 +478,14 @@ export default function Home() {
                 <label className="contact-label">Your Message
                   <textarea required name="message" rows={5} className="contact-textarea" placeholder="What do you want to say?" />
                 </label>
-                <button type="submit" className="contact-submit">Send</button>
+                <button type="submit" className="contact-submit" disabled={isSubmitting}>
+                  {isSubmitting ? 'Sending...' : 'Send'}
+                </button>
+                {submitStatus !== 'idle' && (
+                  <div className={`contact-message ${submitStatus === 'success' ? 'contact-success' : 'contact-error'} ${isFadingOut ? 'fading-out' : ''}`}>
+                    {submitMessage}
+                  </div>
+                )}
               </form>
             </div>
             <p>Email: <a href="mailto:team@fullstackforce.dev">team@fullstackforce.dev</a></p>
