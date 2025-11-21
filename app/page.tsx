@@ -31,6 +31,17 @@ export default function Home() {
   const [showSlogan, setShowSlogan] = useState(false);
   const [codeDisappeared, setCodeDisappeared] = useState(false);
   const [rocketBuildProgress, setRocketBuildProgress] = useState(0);
+  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+  const [showRocket, setShowRocket] = useState(true);
+  const [showCode, setShowCode] = useState(true);
+
+  const phrases = [
+    "End-to-End Product Development.",
+    "Cloud.",
+    "Backend.",
+    "Frontend.",
+    "Integration."
+  ];
 
   useEffect(() => {
     const missionObserver = new IntersectionObserver(
@@ -77,6 +88,35 @@ export default function Home() {
       }, 3500); // Show slogan 2 seconds after rocket launches
     }
   }, [launchRocket]);
+
+  // Unmount code animation after it scrolls away
+  useEffect(() => {
+    if (launchRocket) {
+      const timer = setTimeout(() => {
+        setShowCode(false);
+      }, 8000); // 3s delay + 2s animation + 1s buffer = 6s
+      return () => clearTimeout(timer);
+    }
+  }, [launchRocket]);
+
+  // Unmount rocket after it's off screen
+  useEffect(() => {
+    if (launchRocket) {
+      const timer = setTimeout(() => {
+        setShowRocket(false);
+      }, 8000); // Rocket should be off screen by now
+      return () => clearTimeout(timer);
+    }
+  }, [launchRocket]);
+
+  // Cycle through phrases with fade in/out
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length);
+    }, 3000); // Change phrase every 3 seconds
+
+    return () => clearInterval(interval);
+  }, [phrases.length]);
 
   useEffect(() => {
     if (submitStatus !== 'idle') {
@@ -207,14 +247,16 @@ export default function Home() {
     <>
       <Toolbar />
       {/* Rocket launch animation - positioned outside main to be above toolbar */}
-      <div className="animation-overlay">
-        <RocketLaunchAnimation 
-          launchTriggered={launchRocket} 
-          buildProgress={rocketBuildProgress}
-          width="100%" 
-          height="100%" 
-        />
-      </div>
+      {showRocket && (
+        <div className="animation-overlay">
+          <RocketLaunchAnimation 
+            launchTriggered={launchRocket} 
+            buildProgress={rocketBuildProgress}
+            width="100%" 
+            height="100%" 
+          />
+        </div>
+      )}
       <main>
         {/* Section 1: Homepage */}
         <section className="section hero">
@@ -234,14 +276,16 @@ export default function Home() {
             className="absolute inset-0 z-0"
           />
           {/* Code animation - stays in hero section */}
-          <div className="code-animation-container">
-            <CodeTypingAnimation 
-              autoStart={true} 
-              onLaunchTrigger={() => setLaunchRocket(true)} 
-              onCodeDisappeared={() => setCodeDisappeared(true)}
-              onProgressUpdate={(progress) => setRocketBuildProgress(progress)}
-            />
-          </div>
+          {showCode && (
+            <div className="code-animation-container">
+              <CodeTypingAnimation 
+                autoStart={true} 
+                onLaunchTrigger={() => setLaunchRocket(true)} 
+                onCodeDisappeared={() => setCodeDisappeared(true)}
+                onProgressUpdate={(progress) => setRocketBuildProgress(progress)}
+              />
+            </div>
+          )}
           <div className={`hero-header ${codeDisappeared ? 'centered' : ''}`}>
             <h1 className="hero-title-wrapper">
               {showSlogan && (
@@ -257,23 +301,17 @@ export default function Home() {
               <img className="hero-logo" />FullStackForce
             </h1>
             <div className="hero-typewriter">
-              <Typewriter
-                staticPrefix="Elite Software Engineers for"
-                staticPrefixStyle={{ 
-                  fontFamily: "'Poppins', sans-serif",
-                  fontWeight: 200,
-                  display: 'block',
-                  color: '#f2f1f5',
-                }}
-                staticPrefixClassName="typewriter-prefix"
-                phrases={[
-                  "End-to-End Product Development.",
-                  "Cloud.",
-                  "Backend.",
-                  "Frontend.",
-                  "Integration."
-                ]}
-              />
+              <span className="typewriter-prefix" style={{ 
+                fontFamily: "'Poppins', sans-serif",
+                fontWeight: 200,
+                display: 'block',
+                color: '#f2f1f5',
+              }}>
+                Elite Software Engineers for
+              </span>
+              <span key={currentPhraseIndex} className="neon-blink-text">
+                {phrases[currentPhraseIndex]}
+              </span>
             </div>
             {/*<img src="/laptop.png" alt="Laptop" className="hero-laptop" />*/}
             {/*<div className="hero-laptop" style={{ pointerEvents: 'auto'}}>

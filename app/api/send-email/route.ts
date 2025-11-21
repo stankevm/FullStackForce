@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     // Send email
     const data = await resend.emails.send({
       from: 'FullStackForce Contact <onboarding@resend.dev>', 
-      to: ['nkvchm@gmail.com'],
+      to: ['b.gera13@gmail.com'],
       replyTo: email,
       subject: `New Contact Form Message from ${name}`,
       html: `

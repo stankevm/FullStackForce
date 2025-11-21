@@ -33,16 +33,16 @@ class Business:
     def __init__(self):
         self.growth = 100
         self.profitable = True
-        self.engines = True
-        self.ready = True
+        self.scalable = True
+        self.optimized = True
     
 `;
 
   //gets typed in real time
   const dynamicCodePart1 = `    def verify_readiness(self):
         return (self.growth >= 100 and 
-                self.engines and 
-                self.ready)
+                self.scalable and 
+                self.optimized)
     
     def launch(self):
         self.set_strategy()
@@ -83,7 +83,7 @@ if business.verify_readiness():
 
     const timer = setTimeout(() => {
       onCodeDisappeared();
-    }, 3000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [launchTriggered, onCodeDisappeared]);
@@ -223,7 +223,7 @@ if business.verify_readiness():
 
         .star-wars-code-text {
             color: #FFFFFF;
-            font-weight: bold;
+            font-weight: normal;
             font-size: 25px;
             line-height: 1.5;
             white-space: pre-wrap;
@@ -236,7 +236,7 @@ if business.verify_readiness():
         }
 
         .star-wars-code-text.scrolling-away {
-            animation: smoothScrollAway 2s ease-in 3s forwards;
+            animation: smoothScrollAway 2s cubic-bezier(0.95, 0, 1, 0.1) 2s forwards;
         }
 
         @media (max-width: 768px) {
