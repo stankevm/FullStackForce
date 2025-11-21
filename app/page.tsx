@@ -12,6 +12,7 @@ import GlowingLines from "./components/GlowingLines";
 import Aurora from "./components/Aurora";
 import Particles from "./components/Particles";
 import RocketLaunchAnimation from "./components/RocketLaunchAnimation";
+import CodeTypingAnimation from "./components/CodeTypingAnimation";
 import Orb from "./components/GlowingCircle";
 import LogoCarousel from "./components/LogoCarousel";
 import FlipCard from "./components/FlipCard";
@@ -26,6 +27,9 @@ export default function Home() {
   const [submitMessage, setSubmitMessage] = useState('');
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [flippedCardIndex, setFlippedCardIndex] = useState<number | null>(null);
+  const [launchRocket, setLaunchRocket] = useState(false);
+  const [showSlogan, setShowSlogan] = useState(false);
+  const [codeDisappeared, setCodeDisappeared] = useState(false);
 
   useEffect(() => {
     const missionObserver = new IntersectionObserver(
@@ -63,6 +67,15 @@ export default function Home() {
       whyWorkObserver.disconnect();
     };
   }, []);
+
+  // Show slogan after rocket launches
+  useEffect(() => {
+    if (launchRocket) {
+      setTimeout(() => {
+        setShowSlogan(true);
+      }, 2000); // Show slogan 2 seconds after rocket launches
+    }
+  }, [launchRocket]);
 
   useEffect(() => {
     if (submitStatus !== 'idle') {
@@ -192,6 +205,10 @@ export default function Home() {
   return (
     <>
       <Toolbar />
+      {/* Rocket launch animation - positioned outside main to be above toolbar */}
+      <div className="animation-overlay">
+        <RocketLaunchAnimation launchTriggered={launchRocket} width="100%" height="100%" />
+      </div>
       <main>
         {/* Section 1: Homepage */}
         <section className="section hero">
@@ -210,21 +227,28 @@ export default function Home() {
             disableRotation={false}
             className="absolute inset-0 z-0"
           />
-          {/* Rocket launch animation */}
-          <div style={{ 
-            position: 'absolute', 
-            top: 0, 
-            left: 0, 
-            width: '100%', 
-            height: '100%',
-            pointerEvents: 'none',
-            zIndex: 150,
-            overflow: 'hidden'
-          }}>
-            <RocketLaunchAnimation autoStart={true} showInfo={false} width="100%" height="100%" />
+          {/* Code animation - stays in hero section */}
+          <div className="code-animation-container">
+            <CodeTypingAnimation 
+              autoStart={true} 
+              onLaunchTrigger={() => setLaunchRocket(true)} 
+              onCodeDisappeared={() => setCodeDisappeared(true)}
+            />
           </div>
-          <div className="hero-header">
-            <h1><img className="hero-logo" />FullStackForce</h1>
+          <div className={`hero-header ${codeDisappeared ? 'centered' : ''}`}>
+            <h1 className="hero-title-wrapper">
+              {showSlogan && (
+                <>
+                  <span className="slogan-text slogan-left">
+                    may the
+                  </span>
+                  <span className="slogan-text slogan-right">
+                    skyrocket your growth
+                  </span>
+                </>
+              )}
+              <img className="hero-logo" />FullStackForce
+            </h1>
             <div className="hero-typewriter">
               <Typewriter
                 staticPrefix="Elite Software Engineers for"
@@ -249,7 +273,7 @@ export default function Home() {
               <ComputerCanvas />
             </div>*/}
             <div>
-              <a href="#page-bottom" className="button">
+              <a href="#page-bottom" className={`button ${codeDisappeared ? 'shine' : ''}`}>
                 <span>Let&apos;s Talk</span>
               </a>
             </div>
@@ -360,14 +384,14 @@ export default function Home() {
               ))}
             </div>
 
-            <h2 id="projects" style={{marginTop: '7rem'}}>Projects</h2>
+            <h2 id="projects" className="mt-7">Projects</h2>
             {/*<div className="services-grid projects-grid">
               {projects.map((project, index) => (
                 <GlowCard key={index} card={project} index={index} />
               ))}
             </div>*/}
 
-            <div className="services-grid projects-grid" style={{ marginTop: '2rem' }}>
+            <div className="services-grid projects-grid mt-2">
               {flipCardsData.map((card, index) => (
                 <FlipCard
                   key={index}
@@ -381,7 +405,7 @@ export default function Home() {
               ))}
             </div>
 
-            <h2 id="why-work-with-us" style={{marginTop: '7rem'}}>Why work with us?</h2>
+            <h2 id="why-work-with-us" className="mt-7">Why work with us?</h2>
             <div
               ref={whyWorkRef}
               className={`why-work-statement ${whyWorkIsVisible ? 'visible' : ''}`}
@@ -409,9 +433,9 @@ export default function Home() {
         {/* Section 3: Team & Contact */}
         <section id="contact" className="section section3">
           <div className="section-content">
-            <h2 id="team" style={{ marginBottom: '4rem' }}>Meet our team</h2>
-            <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '1.5rem', marginBottom: '2.5rem'}}>
-                          {[
+            <h2 id="team" className="mb-4">Meet our team</h2>
+            <div className="team-cards-container">
+              {[
               { name: 'Vigen Sh.', role: 'CTO – Strategy & Architecture', imageSrc: '/cosmic-prog-cartoon.png' },
               { name: 'Gera B.', role: 'CEO & R&D Lead', imageSrc: '/whiteboard-prog-cut.png' },
               { name: 'Stas A.', role: 'Frontend Developer', imageSrc: '/toi-prog-cartoon2.png' },
@@ -493,7 +517,7 @@ export default function Home() {
         </section>
 
         {/* for let's talk button */}
-        <div id="page-bottom" style={{ height: '1px' }} />
+        <div id="page-bottom" className="page-anchor" />
       </main>
     </>
   );

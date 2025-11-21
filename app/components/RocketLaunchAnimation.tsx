@@ -17,30 +17,23 @@ type MotionParams = {
 };
 
 interface RocketLaunchAnimationProps {
-  autoStart?: boolean;
+  launchTriggered?: boolean;
   onLaunchComplete?: () => void;
   width?: string;
   height?: string;
-  showInfo?: boolean;
 }
 
 const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({ 
-  autoStart = true, 
+  launchTriggered = false, 
   onLaunchComplete = () => {},
   width = "100%",
   height = "100vh",
-  showInfo = true 
 }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isTyping, setIsTyping] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const [launchInitiated, setLaunchInitiated] = useState(false);
   const [rocketPosition, setRocketPosition] = useState(0);
-  const [rocketXPosition, setRocketXPosition] = useState(0); // horizontal shift
   const [showFlame, setShowFlame] = useState(false);
-  const [particles, setParticles] = useState<Particle[]>([]);
   const [smokePlumes, setSmokePlumes] = useState<any[]>([]);
-  const [typingPhase, setTypingPhase] = useState(1); // 1 = first part, 2 = second part
-  const [showSecondPart, setShowSecondPart] = useState(false);
   // responsive rocket base transform and start position
   const [rocketBaseScale, setRocketBaseScale] = useState(0.7);
   const [rocketStartBottomPct, setRocketStartBottomPct] = useState(-11.5);
@@ -55,75 +48,34 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
 
   // horizontal factor for trajectory; 0 on small screens for straight-up flight
   const horizontalFactor = isSmallScreen ? 0 : 0.18;
-  // angle so rocket tilts to match trajectory; 0 on small screens
-  const trajectoryAngle = 0;
-
   
   const animationRef = useRef<number | null>(null);
   const rocketRef = useRef<HTMLDivElement | null>(null);
   const rocketInnerRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mainNozzleRef = useRef<HTMLDivElement | null>(null);
-  const particleIdRef = useRef(0);
   const smokePlumeId = useRef(0);
 
-  // Static part of the code (always visible)
-  const staticCode = `
-const business = {
-    growth: 100,
-    profitable: true,
-    engines: true,
-    ready: true
-};
-
-function verifyReadiness(growth, engines, ready) {
-    return growth >= 100 && engines && ready;
-}
-
-business.launch = function() {
-    setStrategy();
-    optimizeResources();
-    deploy();
-}\n`;
-
-  //gets typed in real time
-  const dynamicCodePart1 = `function start() {\n      business.launch();\n}\n\nstart();`;
-  const dynamicCodePart2 = `\n\n////   may Fullstackforce skyrocket your growth ⇧  ⇧  🚀`;
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
-    if (!autoStart || !isTyping) return;
-
-    const timer = setTimeout(() => {
-      const currentText = typingPhase === 1 ? dynamicCodePart1 : dynamicCodePart2;
-      
-      if (currentIndex < currentText.length) {
-        setCurrentIndex(prev => prev + 1);
-
-        const typedText = currentText.substring(0, currentIndex + 1);
-        if (typedText.includes('start();') && !launchInitiated && typingPhase === 1) {
-          setLaunchInitiated(true);
-          setTimeout(() => {
-            startLaunchSequence();
-            // After 1.5 seconds, show the second part (comment)
-            setTimeout(() => {
-              setShowSecondPart(true);
-              setTypingPhase(2);
-              setCurrentIndex(0);
-            }, 1500);
-          }, 500);
-        }
-      } else {
-        if (typingPhase === 2) {
-          setIsTyping(false);
-        }
-      }
-    }, getTypingDelay());
-
-    return () => clearTimeout(timer);
-  }, [currentIndex, isTyping, launchInitiated, autoStart, typingPhase]);
+    if (mounted && launchTriggered && !launchInitiated) {
+      setLaunchInitiated(true);
+      // Add a small delay to sync with the code typing "start()" completion if needed, 
+      // or just start immediately. The previous code had a 500ms delay.
+      setTimeout(() => {
+        startLaunchSequence();
+      }, 500);
+    }
+  }, [mounted, launchTriggered, launchInitiated]);
 
   // Update rocket base scale and starting position based on viewport width
   useEffect(() => {
+    if (!mounted) return;
+    
     const applyResponsiveRocket = () => {
       const width = window.innerWidth;
       setIsSmallScreen(width <= 480);
@@ -164,88 +116,10 @@ business.launch = function() {
     return () => window.removeEventListener('resize', applyResponsiveRocket);
   }, []);
 
-  const getTypingDelay = () => {
-    const currentText = typingPhase === 1 ? dynamicCodePart1 : dynamicCodePart2;
-    const char = currentText[currentIndex];
-    if (char === '\n') return 200;
-    if (char === ' ') return 30;
-    if (char === ';' || char === '{' || char === '}') return 150;
-    return 20;
-  };
-
-  const highlightCode = (code: string) => {
-    const keywords = ['const', 'let', 'var', 'function', 'return', 'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'break', 'continue', 'try', 'catch', 'finally', 'throw', 'new', 'typeof', 'instanceof', 'in', 'of', 'true', 'false', 'null', 'undefined', 'this', 'super', 'class', 'extends', 'import', 'export', 'from', 'default', 'as', 'async', 'await', 'void'];
-    const operators = ['=', '>', '<', '>=', '<=', '==', '===', '!=', '!==', '+', '-', '*', '/', '%', '&&', '||', '!', '++', '--', '+=', '-=', '*=', '/=', '%='];
-    
-    // Split the code into tokens while preserving whitespace, strings, and structure
-    const tokens = code.split(/(\s+|[{}();,.\[\]:=+\-*/%!<>&|]|\/\/.*$|"[^"]*"|'[^']*')/gm);
-    
-    return tokens.map((token, index) => {
-      // Skip empty tokens
-      if (!token) return null;
-      
-      // Comments
-      if (token.startsWith('//')) {
-        return <span key={index} style={{ color: '#e5d4ff' }}>{token}</span>;
-      }
-      
-      // Strings (quoted content)
-      if ((token.startsWith('"') && token.endsWith('"')) || (token.startsWith("'") && token.endsWith("'"))) {
-        return <span key={index} style={{ color: '#f8f4ff' }}>{token}</span>;
-      }
-      
-      // Keywords
-      if (keywords.includes(token)) {
-        return <span key={index} style={{ color: '#e8d8ff' }}>{token}</span>;
-      }
-      
-      // Numbers
-      if (/^\d+(\.\d+)?$/.test(token)) {
-        return <span key={index} style={{ color: '#f2ecfa' }}>{token}</span>;
-      }
-      
-      // Property names (after dots)
-      if (tokens[index - 1] === '.') {
-        return <span key={index} style={{ color: '#eed9ff' }}>{token}</span>;
-      }
-      
-      // Function names (before parentheses)
-      if (tokens[index + 1] === '(' || (tokens[index + 1] === ' ' && tokens[index + 2] === '(')) {
-        return <span key={index} style={{ color: '#d8c4ff' }}>{token}</span>;
-      }
-      
-      // Object keys (before colon)
-      if (tokens[index + 1] === ':' || (tokens[index + 1] === ' ' && tokens[index + 2] === ':')) {
-        return <span key={index} style={{ color: '#eed9ff' }}>{token}</span>;
-      }
-      
-      // Operators
-      if (operators.includes(token)) {
-        return <span key={index} style={{ color: '#f5f3f8' }}>{token}</span>;
-      }
-      
-      // Brackets and punctuation
-      if (/[{}();,.\[\]:]/.test(token)) {
-        return <span key={index} style={{ color: '#f5f3f8' }}>{token}</span>;
-      }
-      
-      // Variables and identifiers
-      if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(token)) {
-        return <span key={index} style={{ color: '#eed9ff' }}>{token}</span>;
-      }
-      
-      // Default text (whitespace, etc.)
-      return <span key={index} style={{ color: '#f5f3f8' }}>{token}</span>;
-    });
-  };
-
   const startLaunchSequence = () => {
     setShowFlame(true);
     animateRocket();
   };
-
-
-
 
   const animateRocket = () => {
     let position = 0;
@@ -373,32 +247,10 @@ business.launch = function() {
         animationRef.current = requestAnimationFrame(animate);
       } else {
         onLaunchComplete();
-        //setTimeout(resetAnimation, 2000); for loop animation
       }
     };
 
     animate();
-  };
-
-  const resetAnimation = () => {
-    setCurrentIndex(0);
-    setIsTyping(true);
-    setLaunchInitiated(false);
-    setRocketPosition(0);
-    setShowFlame(false);
-    setParticles([]);
-    setTypingPhase(1);
-    setShowSecondPart(false);
-    if (animationRef.current) {
-      cancelAnimationFrame(animationRef.current);
-    }
-  };
-
-  const manualStart = () => {
-    if (!launchInitiated) {
-      setLaunchInitiated(true);
-      startLaunchSequence();
-    }
   };
 
   return (
@@ -413,40 +265,23 @@ business.launch = function() {
         overflow: 'visible',
       }}
     >
-      {/* Code */}
-              <div
-          className="codeContainer star-wars-code"
-        >
-        <div className="star-wars-code-text">
-          <div style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0
-          }}>
-            {highlightCode(staticCode + 
-              (showSecondPart ? dynamicCodePart1 + dynamicCodePart2.substring(0, currentIndex) : dynamicCodePart1.substring(0, currentIndex))
-            )}
-            {isTyping && <span style={{ animation: 'blink 1s infinite', color: '#FFFFFF' }}>█</span>}
-          </div>
-        </div>
-      </div>
-
-      {/* Rocket */}
-      <div
-        ref={rocketRef}
-        style={{
-          position: 'absolute',
-          bottom: `${rocketStartBottomPct}%`,
-          left: isSmallScreen ? '50%' : undefined,
-          right: isSmallScreen ? undefined : `${rocketStartRightPct}%`,
-          transform: `translateX(-50%) translateX(0px) translateY(0px)`,
-          width: '60px',
-          height: '250px',
-          willChange: 'transform',
-          zIndex: 150
-        }}
-      >
+      {mounted && (
+        <>
+          {/* Rocket */}
+          <div
+            ref={rocketRef}
+            style={{
+              position: 'absolute',
+              bottom: `${rocketStartBottomPct}%`,
+              left: isSmallScreen ? '50%' : undefined,
+              right: isSmallScreen ? undefined : `${rocketStartRightPct}%`,
+              transform: `translateX(-50%) translateX(0px) translateY(0px)`,
+              width: '60px',
+              height: '250px',
+              willChange: 'transform',
+              zIndex: 150
+            }}
+          >
         <div
           ref={rocketInnerRef}
           style={{
@@ -617,35 +452,19 @@ business.launch = function() {
         )}
         </div>
       </div>
+      </>
+    )}
       
-      {smokePlumes.map(plume => (
+      {mounted && smokePlumes.map(plume => (
         <div key={plume.id} style={plume.wrapperStyle}>
           <div style={plume.childStyle} />
         </div>
       ))}
 
       <style jsx>{`
-        @keyframes blink {
-          0%, 50% { opacity: 1; }
-          51%, 100% { opacity: 0; }
-        }
-        @keyframes twinkle {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 1; }
-        }
         @keyframes flicker {
           0% { transform: translateX(-50%) scaleY(1); }
           100% { transform: translateX(-50%) scaleY(1.2); }
-        }
-        @keyframes particleFloat {
-          0% {
-            transform: translate(0, 0);
-            opacity: 1;
-          }
-          100% {
-            transform: translate(0, 60px);
-            opacity: 0;
-          }
         }
         
         @keyframes smoke-drift-left {
@@ -656,64 +475,6 @@ business.launch = function() {
           from { transform: translate(-50%, 0) scale(0.2); opacity: 1; }
           to { transform: translate(80%, 250px) scale(3.2); opacity: 0; }
         }
-
-        .star-wars-code {
-            position: absolute;
-            bottom: 9%;
-            left: 21%;
-            transform: translateX(0%);
-            width: 60%;
-            height: 800px;
-            background: transparent;
-            padding: 20px;
-            box-sizing: border-box;
-            overflow: hidden;
-            z-index: 10;
-            pointer-events: none;
-            text-align: left;
-            perspective: 550px;
-        }
-
-        .star-wars-code-text {
-            color: #FFFFFFBA;
-            font-size: 25px;
-            line-height: 1.5;
-            white-space: pre-wrap;
-            height: 100%;
-            overflow: hidden;
-            position: relative;
-            transform: rotateX(55deg);
-            transform-origin: bottom center;
-        }
-
-        @media (max-width: 768px) {
-            .star-wars-code {
-                bottom: 20%;
-                left: 10%;
-                width: 90%;
-                height: 70vh;
-            }
-            .star-wars-code-text {
-                font-size: 14px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .star-wars-code {
-                bottom: 20%;
-                left: 8%;
-            }
-            .star-wars-code-text {
-                font-size: 11px;
-            }
-        }
-
-        /* Fade effect for the upper part of the code block */
-        .codeContainer {
-          -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,1) 90%);
-          mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,1) 90%);
-        }
-        /* vignette pseudo-elements removed as per user's request */
       `}</style>
       
     </div>
