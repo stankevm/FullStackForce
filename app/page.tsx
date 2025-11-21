@@ -30,6 +30,7 @@ export default function Home() {
   const [launchRocket, setLaunchRocket] = useState(false);
   const [showSlogan, setShowSlogan] = useState(false);
   const [codeDisappeared, setCodeDisappeared] = useState(false);
+  const [rocketBuildProgress, setRocketBuildProgress] = useState(0);
 
   useEffect(() => {
     const missionObserver = new IntersectionObserver(
@@ -73,7 +74,7 @@ export default function Home() {
     if (launchRocket) {
       setTimeout(() => {
         setShowSlogan(true);
-      }, 2000); // Show slogan 2 seconds after rocket launches
+      }, 3500); // Show slogan 2 seconds after rocket launches
     }
   }, [launchRocket]);
 
@@ -207,7 +208,12 @@ export default function Home() {
       <Toolbar />
       {/* Rocket launch animation - positioned outside main to be above toolbar */}
       <div className="animation-overlay">
-        <RocketLaunchAnimation launchTriggered={launchRocket} width="100%" height="100%" />
+        <RocketLaunchAnimation 
+          launchTriggered={launchRocket} 
+          buildProgress={rocketBuildProgress}
+          width="100%" 
+          height="100%" 
+        />
       </div>
       <main>
         {/* Section 1: Homepage */}
@@ -233,6 +239,7 @@ export default function Home() {
               autoStart={true} 
               onLaunchTrigger={() => setLaunchRocket(true)} 
               onCodeDisappeared={() => setCodeDisappeared(true)}
+              onProgressUpdate={(progress) => setRocketBuildProgress(progress)}
             />
           </div>
           <div className={`hero-header ${codeDisappeared ? 'centered' : ''}`}>

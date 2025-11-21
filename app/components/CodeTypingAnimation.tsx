@@ -6,6 +6,7 @@ interface CodeTypingAnimationProps {
   autoStart?: boolean;
   onLaunchTrigger?: () => void;
   onCodeDisappeared?: () => void;
+  onProgressUpdate?: (progress: number) => void;
   className?: string;
 }
 
@@ -13,6 +14,7 @@ const CodeTypingAnimation: React.FC<CodeTypingAnimationProps> = ({
   autoStart = true, 
   onLaunchTrigger = () => {},
   onCodeDisappeared = () => {},
+  onProgressUpdate = () => {},
   className = ""
 }) => {
   const [mounted, setMounted] = useState(false);
@@ -59,6 +61,10 @@ if business.verify_readiness():
       if (currentIndex < dynamicCodePart1.length) {
         setCurrentIndex(prev => prev + 1);
 
+        // Update progress for rocket building
+        const progress = (currentIndex + 1) / dynamicCodePart1.length;
+        onProgressUpdate(progress);
+
         const typedText = dynamicCodePart1.substring(0, currentIndex + 1);
         if (typedText.includes('business.launch()') && !launchTriggered) {
           setLaunchTriggered(true);
@@ -70,14 +76,14 @@ if business.verify_readiness():
     }, getTypingDelay());
 
     return () => clearTimeout(timer);
-  }, [mounted, currentIndex, isTyping, launchTriggered, autoStart, onLaunchTrigger]);
+  }, [mounted, currentIndex, isTyping, launchTriggered, autoStart, onLaunchTrigger, onProgressUpdate]);
 
   useEffect(() => {
     if (!launchTriggered) return;
 
     const timer = setTimeout(() => {
       onCodeDisappeared();
-    }, 1000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [launchTriggered, onCodeDisappeared]);
@@ -163,22 +169,26 @@ if business.verify_readiness():
         fontFamily: 'Courier New, monospace',
         overflow: 'visible',
         height: '100%',
-        position: 'relative'
+        position: 'relative',
+        opacity: 1
       }}
     >
-      {mounted && (
-        <div className={`star-wars-code-text ${launchTriggered ? 'scrolling-away' : ''}`}>
-          <div style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0
-          }}>
-            {highlightCode(staticCode + dynamicCodePart1.substring(0, currentIndex))}
-            {isTyping && <span style={{ animation: 'blink 1s infinite', color: '#FFFFFF' }}>█</span>}
-          </div>
+      <div className={`star-wars-code-text ${launchTriggered ? 'scrolling-away' : ''}`}>
+        <div style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0
+        }}>
+          {highlightCode(staticCode)}
+          {mounted && (
+            <>
+              {highlightCode(dynamicCodePart1.substring(0, currentIndex))}
+              {isTyping && <span style={{ animation: 'blink 1s infinite', color: '#FFFFFF' }}>█</span>}
+            </>
+          )}
         </div>
-      )}
+      </div>
       <style jsx>{`
         @keyframes blink {
           0%, 50% { opacity: 1; }
@@ -226,7 +236,7 @@ if business.verify_readiness():
         }
 
         .star-wars-code-text.scrolling-away {
-            animation: smoothScrollAway 2s ease-in 2s forwards;
+            animation: smoothScrollAway 2s ease-in 3s forwards;
         }
 
         @media (max-width: 768px) {

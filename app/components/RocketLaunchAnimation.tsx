@@ -19,6 +19,7 @@ type MotionParams = {
 interface RocketLaunchAnimationProps {
   launchTriggered?: boolean;
   onLaunchComplete?: () => void;
+  buildProgress?: number; // 0 to 1, controls how much of the rocket is built
   width?: string;
   height?: string;
 }
@@ -26,6 +27,7 @@ interface RocketLaunchAnimationProps {
 const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({ 
   launchTriggered = false, 
   onLaunchComplete = () => {},
+  buildProgress = 1,
   width = "100%",
   height = "100vh",
 }) => {
@@ -40,14 +42,14 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
   const [rocketStartRightPct, setRocketStartRightPct] = useState(5);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [motionParams, setMotionParams] = useState<MotionParams>({
-    initialVelocity: 0.05,
-    baseAcceleration: 0.1,
-    accelerationGrowthRate: 0.008,
+    initialVelocity: 0,
+    baseAcceleration: 0.0007,
+    accelerationGrowthRate: 0.0055,
     timeStep: 0.016,
   });
 
   // horizontal factor for trajectory; 0 on small screens for straight-up flight
-  const horizontalFactor = isSmallScreen ? 0 : 0.18;
+  const horizontalFactor = isSmallScreen ? 0 : 0.35;
   
   const animationRef = useRef<number | null>(null);
   const rocketRef = useRef<HTMLDivElement | null>(null);
@@ -81,32 +83,32 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
       setIsSmallScreen(width <= 480);
       if (width <= 480) {
         setRocketBaseScale(0.4);
-        setRocketStartBottomPct(-15);
+        setRocketStartBottomPct(32);
         setRocketStartRightPct(4);
         setMotionParams({
-          initialVelocity: 0.02,
-          baseAcceleration: 0.06,
-          accelerationGrowthRate: 0.012,
+          initialVelocity: 0,
+          baseAcceleration: 0.0002,
+          accelerationGrowthRate: 0.0052,
           timeStep: 0.001,
         });
       } else if (width <= 768) {
         setRocketBaseScale(0.6);
-        setRocketStartBottomPct(-9);
+        setRocketStartBottomPct(38);
         setRocketStartRightPct(4);
         setMotionParams({
-          initialVelocity: 0.05,
-          baseAcceleration: 0.12,
-          accelerationGrowthRate: 0.008,
+          initialVelocity: 0,
+          baseAcceleration: 0.0005,
+          accelerationGrowthRate: 0.0052,
           timeStep: 0.016,
         });
       } else {
         setRocketBaseScale(0.7);
-        setRocketStartBottomPct(-11.5);
+        setRocketStartBottomPct(35);
         setRocketStartRightPct(5);
         setMotionParams({
-          initialVelocity: 0.05,
-          baseAcceleration: 0.18,
-          accelerationGrowthRate: 0.01,
+          initialVelocity: 0,
+          baseAcceleration: 0.0007,
+          accelerationGrowthRate: 0.0055,
           timeStep: 0.016,
         });
       }
@@ -118,7 +120,10 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
 
   const startLaunchSequence = () => {
     setShowFlame(true);
-    animateRocket();
+    // Wait 1 second with flames on before rocket starts moving
+    setTimeout(() => {
+      animateRocket();
+    }, 200);
   };
 
   const animateRocket = () => {
@@ -126,7 +131,7 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
     let velocity = motionParams.initialVelocity;
     let time = 0;
     let plumeCreationCount = 0;
-    const maxPlumes = window.innerWidth > 768 ? 30 : 50;
+    const maxPlumes = window.innerWidth > 768 ? 80 : 100;
     let lastPlumeTime = 0;
     let previousXPos = 0;
 
@@ -140,8 +145,8 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
       position += velocity;
 
       // Calculate turn progress
-      const rotationStart = isSmallScreen ? 0 : 320;
-      const rotationRamp = isSmallScreen ? 400 : 650;
+      const rotationStart = isSmallScreen ? 0 : 150; // Start turning earlier
+      const rotationRamp = isSmallScreen ? 400 : 2000; // Much longer ramp - keep turning
       const turnEnd = rotationStart + rotationRamp;
       
       // Phase 1: Before turn (vertical flight)
@@ -194,7 +199,7 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
 
       const currentTime = performance.now();
       
-      if (currentTime - lastPlumeTime > 40 && plumeCreationCount < maxPlumes) { // 80ms interval (less frequent)
+      if (currentTime - lastPlumeTime > 80 && plumeCreationCount < maxPlumes) { // 80ms interval (less frequent)
         const id = smokePlumeId.current++;
         const side = (Math.random() > 0.5) ? 1 : -1;
         const containerRect = containerRef.current?.getBoundingClientRect();
@@ -253,6 +258,13 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
     animate();
   };
 
+  // Calculate opacity for each rocket part based on build progress
+  const getPartOpacity = (startProgress: number, endProgress: number) => {
+    if (buildProgress < startProgress) return 0;
+    if (buildProgress >= endProgress) return 1;
+    return (buildProgress - startProgress) / (endProgress - startProgress);
+  };
+
   return (
     <div 
       ref={containerRef}
@@ -277,7 +289,7 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
               right: isSmallScreen ? undefined : `${rocketStartRightPct}%`,
               transform: `translateX(-50%) translateX(0px) translateY(0px)`,
               width: '60px',
-              height: '250px',
+              height: '350px',
               willChange: 'transform',
               zIndex: 150
             }}
@@ -296,33 +308,37 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
         {/* Main Rocket Body */}
         <div style={{
           position: 'absolute',
-          bottom: '30px',
+          bottom: '95px',
           left: '50%',
           transform: 'translateX(-50%)',
           width: '30px',
           height: '180px',
           background: 'linear-gradient(to right, #909090, #b0b0b0, #808080)',
           borderRadius: '15px 15px 6px 6px',
-          boxShadow: 'inset -3px 0 8px rgba(0,0,0,0.1)'
+          boxShadow: 'inset -3px 0 8px rgba(0,0,0,0.1)',
+          opacity: getPartOpacity(0, 0.2),
+          transition: 'opacity 0.3s ease-out'
         }} />
         
         {/* Upper Stage */}
         <div style={{
           position: 'absolute',
-          bottom: '200px',
+          bottom: '265px',
           left: '50%',
           transform: 'translateX(-50%)',
           width: '24px',
           height: '45px',
           background: 'linear-gradient(to right, #a0a0a0, #b8b8b8, #989898)',
           borderRadius: '12px 12px 4px 4px',
-          boxShadow: 'inset -2px 0 6px rgba(0,0,0,0.1)'
+          boxShadow: 'inset -2px 0 6px rgba(0,0,0,0.1)',
+          opacity: getPartOpacity(0.5, 0.7),
+          transition: 'opacity 0.3s ease-out'
         }} />
         
         {/* Command Module Window */}
         <div style={{
           position: 'absolute',
-          bottom: '215px',
+          bottom: '280px',
           left: '50%',
           transform: 'translateX(-50%)',
           width: '10px',
@@ -330,88 +346,104 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
           background: 'radial-gradient(circle,rgb(183, 112, 255),rgb(74, 28, 138))',
           borderRadius: '50%',
           border: '1px solid #2f3542',
-          boxShadow: 'inset 1px 1px 3px rgba(255,255,255,0.5)'
+          boxShadow: 'inset 1px 1px 3px rgba(255,255,255,0.5)',
+          opacity: getPartOpacity(0.7, 0.85),
+          transition: 'opacity 0.3s ease-out'
         }} />
         
         {/* Service Module Details */}
         <div style={{
           position: 'absolute',
-          bottom: '100px',
+          bottom: '165px',
           left: '50%',
           transform: 'translateX(-50%)',
           width: '28px',
           height: '4px',
           background: '#57606f',
-          borderRadius: '2px'
+          borderRadius: '2px',
+          opacity: getPartOpacity(0.35, 0.5),
+          transition: 'opacity 0.3s ease-out'
         }} />
         <div style={{
           position: 'absolute',
-          bottom: '85px',
+          bottom: '150px',
           left: '50%',
           transform: 'translateX(-50%)',
           width: '28px',
           height: '4px',
           background: '#57606f',
-          borderRadius: '2px'
+          borderRadius: '2px',
+          opacity: getPartOpacity(0.35, 0.5),
+          transition: 'opacity 0.3s ease-out'
         }} />
         
         {/* Side Boosters */}
         <div style={{
           position: 'absolute',
-          bottom: '30px',
+          bottom: '95px',
           left: '1px',
           width: '12px',
           height: '140px',
           background: 'linear-gradient(to right, #888888, #a0a0a0, #787878)',
           borderRadius: '6px 6px 3px 3px',
-          boxShadow: 'inset -1px 0 4px rgba(0,0,0,0.1)'
+          boxShadow: 'inset -1px 0 4px rgba(0,0,0,0.1)',
+          opacity: getPartOpacity(0.2, 0.35),
+          transition: 'opacity 0.3s ease-out'
         }} />
         <div style={{
           position: 'absolute',
-          bottom: '30px',
+          bottom: '95px',
           right: '1px',
           width: '12px',
           height: '140px',
           background: 'linear-gradient(to right, #888888, #a0a0a0, #787878)',
           borderRadius: '6px 6px 3px 3px',
-          boxShadow: 'inset -1px 0 4px rgba(0,0,0,0.1)'
+          boxShadow: 'inset -1px 0 4px rgba(0,0,0,0.1)',
+          opacity: getPartOpacity(0.2, 0.35),
+          transition: 'opacity 0.3s ease-out'
         }} />
         
         {/* Engine Nozzles */}
         <div ref={mainNozzleRef} style={{
           position: 'absolute',
-          bottom: '15px',
+          bottom: '80px',
           left: '50%',
           transform: 'translateX(-50%)',
           width: '14px',
           height: '12px',
           background: 'linear-gradient(to bottom, #57606f, #2c2c54)',
-          borderRadius: '9px 9px 3px 3px'
+          borderRadius: '9px 9px 3px 3px',
+          opacity: getPartOpacity(0.85, 1),
+          transition: 'opacity 0.3s ease-out'
         }} />
         <div style={{
           position: 'absolute',
-          bottom: '20px',
+          bottom: '85px',
           left: '3px',
           width: '6px',
           height: '8px',
           background: 'linear-gradient(to bottom, #57606f, #2c2c54)',
-          borderRadius: '4px 4px 2px 2px'
+          borderRadius: '4px 4px 2px 2px',
+          opacity: getPartOpacity(0.85, 1),
+          transition: 'opacity 0.3s ease-out'
         }} />
         <div style={{
           position: 'absolute',
-          bottom: '20px',
+          bottom: '85px',
           right: '3px',
           width: '6px',
           height: '8px',
           background: 'linear-gradient(to bottom, #57606f, #2c2c54)',
-          borderRadius: '4px 4px 2px 2px'
+          borderRadius: '4px 4px 2px 2px',
+          opacity: getPartOpacity(0.85, 1),
+          transition: 'opacity 0.3s ease-out'
         }} />
         
         {/* Main Engine Flame */}
         {showFlame && (
           <div style={{
             position: 'absolute',
-            bottom: '-25px',
+            bottom: '68px',
             left: '50%',
             transform: 'translateX(-50%)',
             width: '16px',
@@ -428,7 +460,7 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
           <>
             <div style={{
               position: 'absolute',
-              bottom: '-15px',
+              bottom: '73px',
               left: '6px',
               width: '8px',
               height: '15px',
@@ -439,7 +471,7 @@ const RocketLaunchAnimation: React.FC<RocketLaunchAnimationProps> = ({
             }} />
             <div style={{
               position: 'absolute',
-              bottom: '-15px',
+              bottom: '73px',
               right: '-2px',
               width: '8px',
               height: '15px',
