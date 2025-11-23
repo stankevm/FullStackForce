@@ -481,10 +481,10 @@ export default function Home() {
             <h2 id="team" className="mb-4">Meet our team</h2>
             <div className="team-cards-container">
               {[
-              { name: 'Vigen Sh.', role: 'CTO – Strategy & Architecture', imageSrc: '/cosmic-prog-cartoon.png' },
+              { name: 'Vigen Sh.', role: 'CTO – Strategy & Architecture', imageSrc: '/disney-prog-space-purple.png' },
               { name: 'Gera B.', role: 'CEO & R&D Lead', imageSrc: '/whiteboard-prog-cut.png' },
               { name: 'Stas A.', role: 'Frontend Developer', imageSrc: '/toi-prog-cartoon2.png' },
-              { name: 'Stas B.', role: 'Backend Developer', imageSrc: '/prog-table2.png' },
+              { name: 'Stas B.', role: 'Backend Developer', imageSrc: '/disney-table4.png' },
             ].map((member, idx) => (
                 <TeamCard
                   key={idx}
